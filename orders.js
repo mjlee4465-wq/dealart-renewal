@@ -215,9 +215,19 @@
     var digits = phone.value.replace(/\D/g, '');
     if (!/^01\d{8,9}$/.test(digits)) { show(phoneErr, '휴대폰 번호를 정확히 입력해 주세요. (예: 010-1234-5678)', [phone]); bad = bad || phone; }
     if (bad) { bad.focus(); return; }
-    // 주문 조회 서버가 아직 없다. 입력한 내용은 저장하거나 전송하지 않는다.
-    resultDesc.textContent = y + '.' + pad(m) + '.' + pad(d) + ' 주문의 진행 상황은 카카오톡으로 문의해 주세요.';
-    result.hidden = false;
-    result.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    // 입력한 내용은 저장하거나 전송하지 않는다.
+    var cfg = window.DEALART_ORDERS || { ready: false, orders: [] };
+    if (!cfg.ready) {
+      // 주문 데이터가 아직 연결되지 않았다: "주문 없음"으로 잘못 알리지 않고 준비 중이라고 안내한다. (orders-config.js 의 ready 를 true 로 바꾸면 결과 화면이 열린다)
+      resultDesc.textContent = y + '.' + pad(m) + '.' + pad(d) + ' 주문의 진행 상황은 카카오톡으로 문의해 주세요.';
+      result.hidden = false;
+      result.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      return;
+    }
+    var key = y + '-' + pad(m) + '-' + pad(d);
+    var found = (cfg.orders || []).filter(function (o) { return o.date === key && String(o.phone || '').replace(/\D/g, '') === digits; });
+    var input = { date: key, phone: digits };
+    if (found.length) window.DealartOrderViews.showFound(found, input, false);
+    else window.DealartOrderViews.showEmpty(input, false);
   });
 })();

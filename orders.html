@@ -73,6 +73,36 @@
       </div>
     </section>
 
+    <section class="order-view" id="viewFound" hidden aria-labelledby="foundTitle">
+      <p class="preview-note" id="previewFound" hidden>미리보기 화면입니다. 아래 내용은 예시이며 실제 주문이 아닙니다.</p>
+      <h2 class="ov-title sr-only" id="foundTitle">조회된 주문</h2>
+      <p class="ov-meta" id="foundMeta"></p>
+      <div class="ov-list" id="foundBody"></div>
+      <div class="ov-actions">
+        <a class="btn kakao" href="https://open.kakao.com/o/gbaveXvi" target="_blank" rel="noopener noreferrer">카카오톡으로 변경·취소 문의하기</a>
+        <button class="btn outline" type="button" data-order-retry>다른 주문 조회하기</button>
+      </div>
+    </section>
+
+    <section class="order-view" id="viewEmpty" hidden aria-labelledby="emptyTitle">
+      <p class="preview-note" id="previewEmpty" hidden>미리보기 화면입니다. 실제 조회 결과가 아닙니다.</p>
+      <div class="empty-card">
+        <span class="empty-icon" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="14" cy="14" r="8" stroke="currentColor" stroke-width="2"/><path d="m20 20 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M11 14h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+        <h2 class="ov-title" id="emptyTitle">조회된 주문이 없습니다</h2>
+        <p class="ov-meta" id="emptyMeta"></p>
+        <p class="empty-desc">입력하신 주문 날짜와 휴대폰 번호로 접수된 주문을 찾지 못했습니다.</p>
+        <ul class="empty-tips">
+          <li>주문하신 날짜가 맞는지 확인해 주세요.</li>
+          <li>주문할 때 입력한 휴대폰 번호인지 확인해 주세요.</li>
+          <li>그래도 찾지 못하면 카카오톡으로 문의해 주세요.</li>
+        </ul>
+      </div>
+      <div class="ov-actions">
+        <button class="btn primary" type="button" data-order-retry>다시 조회하기</button>
+        <a class="btn kakao" href="https://open.kakao.com/o/gbaveXvi" target="_blank" rel="noopener noreferrer">카카오톡으로 문의하기</a>
+      </div>
+    </section>
+
     <section class="order-steps">
       <h2 class="h2">주문 진행 단계</h2>
       <p class="cat-desc">예약 주문은 아래 순서로 진행됩니다.</p>
@@ -111,6 +141,8 @@
   <a href="orders.html" class="active" aria-current="page" data-order-tab data-count="0"><span class="tab-ico"><img src="assets/nav4.svg" width="18" height="18" alt=""><b class="tab-badge" hidden>0</b></span><span class="lbl">주문조회</span></a>
 </nav>
 
+<script src="orders-config.js"></script>
+<script src="order-views.js"></script>
 <script src="orders.js"></script>
 <script src="tabbar.js"></script>
 </body>
