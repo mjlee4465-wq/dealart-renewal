@@ -67,3 +67,44 @@
 
   paint(); start();
 })();
+
+/* 최신뉴스: 3초마다 기사가 한 칸씩 위로 올라가며 바뀐다 */
+(function () {
+  var win = document.getElementById('newsWindow');
+  var list = document.getElementById('newsList');
+  if (!win || !list || list.children.length < 2) return;
+  var INTERVAL = 3000, SLIDE = 600;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) { win.classList.add('is-static'); return; }
+
+  var timer = null, busy = false, visible = true, held = false;
+  function step() {
+    if (busy || held || !visible || document.hidden) return;
+    busy = true;
+    var h = list.firstElementChild.getBoundingClientRect().height;
+    list.style.transition = 'transform ' + SLIDE + 'ms cubic-bezier(.32,.72,0,1)';
+    list.style.transform = 'translateY(' + (-h) + 'px)';
+    setTimeout(function () {
+      list.style.transition = 'none';
+      list.appendChild(list.firstElementChild);
+      list.style.transform = 'none';
+      void list.offsetHeight; // 되돌린 위치를 바로 확정
+      busy = false;
+    }, SLIDE + 40);
+  }
+  function start() { if (!timer) timer = setInterval(step, INTERVAL); }
+  function stop() { clearInterval(timer); timer = null; }
+  start();
+
+  // 기사를 읽거나 누르는 동안에는 멈추고, 손을 떼면 다시 시작
+  var resume = null;
+  function hold() { held = true; clearTimeout(resume); }
+  function release() { clearTimeout(resume); resume = setTimeout(function () { held = false; }, INTERVAL); }
+  ['touchstart', 'pointerenter', 'focusin'].forEach(function (ev) { win.addEventListener(ev, hold, { passive: true }); });
+  ['touchend', 'touchcancel', 'pointerleave', 'focusout'].forEach(function (ev) { win.addEventListener(ev, release, { passive: true }); });
+
+  // 화면에 보일 때만 움직인다
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) { visible = es[0].isIntersecting; }, { threshold: 0.2 }).observe(win);
+  }
+})();
