@@ -13,4 +13,17 @@
  *
  * 화면 미리보기(예시 데이터, 실제 주문 아님):  orders.html?preview=found  /  orders.html?preview=empty
  */
-window.DEALART_ORDERS = { ready: false, orders: [] };
+/* testCases: ready 와 상관없이 아래 입력값일 때만 결과 화면을 열어 보는 테스트용 항목 (실제 주문이 아니다)
+ *   2026-01-01 + 010-1111-1111 → '조회된 주문' 화면
+ *   2026-01-01 + 010-0000-0000 → '조회된 주문이 없습니다' 화면
+ * 테스트가 끝나면 이 항목을 지우면 된다. */
+window.DEALART_ORDERS = {
+  ready: false,
+  orders: [],
+  testCases: [
+    { date: '2026-01-01', phone: '01011111111', result: 'found',
+      order: { date: '2026-01-01', number: 'DA-TEST-0001', status: 1, deliveryDate: '2026-01-05', method: '지정일 배송',
+               items: [{ brand: '스즈란테이', name: '일식 도시락 (테스트 상품)', qty: 2 }, { brand: '프룻대디', name: '제철 과일 선물세트 (테스트 상품)', qty: 1 }] } },
+    { date: '2026-01-01', phone: '01000000000', result: 'empty' }
+  ]
+};
