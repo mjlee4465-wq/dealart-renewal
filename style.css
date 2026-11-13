@@ -23,7 +23,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .logo{font-weight:500;font-size:17px;letter-spacing:4.76px;line-height:27px}
 .header-actions{display:flex;gap:4px}
 .icon-btn{width:40px;height:40px;display:grid;place-items:center}
-.cat-nav{display:flex;gap:21px;padding:0 12px;height:39.8px;border-top:.8px solid rgba(27,61,49,.05);overflow-x:auto;scrollbar-width:none}
+.cat-nav{display:flex;justify-content:space-between;gap:12px;padding:0 12px;height:39.8px;border-top:.8px solid rgba(27,61,49,.05);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
 .cat-nav::-webkit-scrollbar{display:none}
 .cat-nav a{flex:none;font-size:12px;line-height:19.2px;letter-spacing:-.42px;color:var(--ink-60);padding:10px 0 9px;border-bottom:.8px solid transparent;white-space:nowrap}
 .cat-nav a.active{color:var(--ink);border-bottom-color:var(--ink)}
@@ -215,3 +215,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 /* 최신뉴스: 3초마다 한 칸씩 위로. 동작 줄이기를 켠 경우에는 5개를 모두 정지 상태로 보여준다 */
 .news-window.is-static{height:auto}
+
+/* 최신뉴스: 기타 언론보도 링크 */
+.press-more{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:14px}
+.press-more span{font-family:var(--font-plex);font-size:12px;line-height:19px;color:var(--ink-60);margin-right:4px}
+.press-more a{font-family:var(--font-plex);font-weight:500;font-size:11px;line-height:14px;padding:6px 10px;border-radius:999px;background:var(--bg-muted);color:var(--ink-72);white-space:nowrap}
+.press-more a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* 상단 카테고리 탭: 화면보다 길면 오른쪽 끝을 흐리게 해서 더 있다는 것을 보여준다 */
+.cat-nav.has-more{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent)}
+.cat-nav.has-more.at-end{-webkit-mask-image:none;mask-image:none}

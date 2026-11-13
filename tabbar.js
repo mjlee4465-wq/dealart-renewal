@@ -38,3 +38,25 @@
   setOrderBadge(initial);
   window.DealartTabbar = { setOrderBadge: setOrderBadge };
 })();
+
+/* 상단 카테고리 탭: 현재 탭을 보이는 위치로 옮기고, 가려진 탭이 있으면 오른쪽 끝을 흐리게 표시 */
+(function () {
+  var nav = document.querySelector('.cat-nav');
+  if (!nav) return;
+  function update() {
+    var more = nav.scrollWidth > nav.clientWidth + 2;
+    var atEnd = nav.scrollLeft + nav.clientWidth >= nav.scrollWidth - 2;
+    nav.classList.toggle('has-more', more);
+    nav.classList.toggle('at-end', more && atEnd);
+  }
+  function revealActive() {
+    var a = nav.querySelector('a.active');
+    if (!a) return;
+    var target = a.offsetLeft - (nav.clientWidth - a.offsetWidth) / 2;
+    nav.scrollLeft = Math.max(0, target); // 페이지 세로 위치는 건드리지 않는다
+  }
+  nav.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', function () { update(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { update(); });
+  revealActive(); update();
+})();
