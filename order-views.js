@@ -25,10 +25,8 @@
   }
   function focusTitle(view) {
     var t = view === 'found' ? $('foundTitle') : $('emptyTitle');
-    var ae = document.activeElement; if (ae && ae !== document.body && ae.blur) ae.blur(); // 휴대폰 키보드를 먼저 닫는다
     t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true });
-    window.scrollTo(0, 0);
-    setTimeout(function () { window.scrollTo(0, 0); }, 300); // 키보드가 닫히며 화면 크기가 늦게 바뀌어도 맨 위에 둔다
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   /* ---------- 조회된 주문 ---------- */
