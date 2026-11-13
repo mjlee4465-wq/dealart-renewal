@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="page-orders">
 <div class="app">
 
   <header class="header">
@@ -39,14 +39,24 @@
     </section>
 
     <section class="order-lookup" aria-label="주문 조회">
-      <form class="order-card" id="orderForm" novalidate>
+      <form class="order-card" id="orderForm" autocomplete="off" novalidate>
         <fieldset class="field date-field" aria-describedby="orderDateErr">
           <legend>주문 날짜</legend>
           <div class="select-row">
-            <select id="orderYear" name="orderYear" aria-label="주문 연도" required><option value="" selected>년</option></select>
-            <select id="orderMonth" name="orderMonth" aria-label="주문 월" required><option value="" selected>월</option></select>
-            <select id="orderDay" name="orderDay" aria-label="주문 일" required><option value="" selected>일</option></select>
+            <div class="year-wrap">
+              <button type="button" class="date-btn is-empty" id="orderYearBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="orderYearList" aria-label="주문 연도 선택"><span>년</span><svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <ul class="ylist" id="orderYearList" role="listbox" aria-label="주문 연도" hidden></ul>
+              <input type="hidden" id="orderYear" name="orderYear">
+            </div>
+            <div class="year-wrap">
+              <button type="button" class="date-btn is-empty" id="orderMonthBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="orderMonthList" aria-label="주문 월 선택"><span>월</span><svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <ul class="ylist mlist" id="orderMonthList" role="listbox" aria-label="주문 월" hidden></ul>
+            </div>
+            <button type="button" class="date-btn is-empty" id="orderDayBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="orderCalendar" aria-label="주문 일 선택"><span>일</span><svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <div class="cal" id="orderCalendar" role="dialog" aria-label="주문 날짜 선택" hidden></div>
           </div>
+          <input type="hidden" id="orderMonth" name="orderMonth">
+          <input type="hidden" id="orderDay" name="orderDay">
           <p class="field-err" id="orderDateErr" hidden></p>
         </fieldset>
         <div class="field">

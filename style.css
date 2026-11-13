@@ -263,3 +263,64 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .select-row select option{color:var(--ink)}
 .select-row select:focus-visible{outline:2px solid var(--ink);outline-offset:1px;border-color:var(--ink)}
 .select-row select[aria-invalid="true"]{border-color:#c8412f}
+
+/* ---- order page: month/day calendar + rounded corners everywhere ---- */
+.date-field{position:relative}
+.select-row{grid-template-columns:1.25fr 1fr 1fr}
+.date-btn{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;min-width:0;height:48px;padding:0 12px 0 14px;border:1px solid var(--line);border-radius:14px;background:#fff;font:400 14px/22px var(--font-plex);color:var(--ink);cursor:pointer;text-align:left}
+.date-btn.is-empty{color:var(--ink-50)}
+.date-btn svg{flex:none;opacity:.7}
+.date-btn[aria-expanded="true"]{border-color:var(--ink)}
+.date-btn:focus-visible{outline:2px solid var(--ink);outline-offset:1px;border-color:var(--ink)}
+.date-btn[aria-invalid="true"]{border-color:#c8412f}
+.cal{position:absolute;left:0;right:0;top:calc(100% - 4px);z-index:20;padding:16px;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 12px 32px rgba(27,61,49,.16)}
+.cal[hidden]{display:none}
+.cal-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:12px}
+.cal-title{font-family:var(--font-plex);font-weight:600;font-size:15px;line-height:24px}
+.cal-nav{width:36px;height:36px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:20px;line-height:1;color:var(--ink);cursor:pointer}
+.cal-nav:disabled{opacity:.3;cursor:default}
+.cal-nav:focus-visible,.cal-day:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.cal-week,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px 0;text-align:center}
+.cal-week span{font-family:var(--font-plex);font-size:11px;line-height:20px;color:var(--ink-60);padding-bottom:4px}
+.cal-week .sun,.cal-day.sun{color:#c8412f}
+.cal-day{justify-self:center;width:36px;height:36px;border:0;border-radius:999px;background:transparent;font:400 13px/36px var(--font-plex);color:var(--ink);cursor:pointer}
+.cal-day:hover:not(:disabled):not(.on){background:var(--bg-muted)}
+.cal-day.on{background:var(--ink);color:#fff;font-weight:600}
+.cal-day:disabled{color:rgba(27,61,49,.28);cursor:default}
+.page-orders .order-card{border-radius:24px}
+.page-orders .field input,.page-orders .select-row select{border-radius:14px}
+.page-orders .btn{border-radius:999px}
+.page-orders .order-result{border-radius:20px}
+@media (prefers-reduced-motion:reduce){.cal{transition:none}}
+
+/* ---- order page: rounded custom year list (replaces the native select popup) ---- */
+.year-wrap{position:relative;min-width:0}
+.ylist{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;margin:0;padding:6px;list-style:none;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 32px rgba(27,61,49,.16)}
+.ylist[hidden]{display:none}
+.ylist li{height:40px;padding:0 12px;border-radius:12px;font:400 14px/40px var(--font-plex);color:var(--ink);cursor:pointer;outline:0}
+.ylist li:hover{background:var(--bg-muted)}
+.ylist li:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+.ylist li[aria-selected="true"]{background:var(--ink);color:#fff;font-weight:600}
+
+/* ---- month list = same rounded list as the year (scrolls when taller than 6 rows) ---- */
+.mlist{max-height:268px;overflow-y:auto;overscroll-behavior:contain}
+.ylist li[aria-disabled="true"]{color:rgba(27,61,49,.28);cursor:default}
+.ylist li[aria-disabled="true"]:hover{background:transparent}
+
+/* ---- year/month lists: tighter row spacing ---- */
+.ylist{padding:4px}
+.ylist li{height:32px;padding:0 10px;border-radius:10px;font-size:13px;line-height:32px}
+.mlist{max-height:204px}
+.mlist{scrollbar-width:thin;scrollbar-color:rgba(27,61,49,.28) transparent}
+.mlist::-webkit-scrollbar{width:6px}
+.mlist::-webkit-scrollbar-button{display:none}
+.mlist::-webkit-scrollbar-track{background:transparent}
+.mlist::-webkit-scrollbar-thumb{background:rgba(27,61,49,.28);border-radius:999px}
+
+/* month list: scrollbar hidden (still scrolls by wheel/touch/keys); the 7th row peeks out as the scroll hint */
+.mlist{scrollbar-width:none;-ms-overflow-style:none;max-height:212px}
+.mlist::-webkit-scrollbar{display:none;width:0;height:0}
+
+/* calendar sits 6px below the date boxes, same gap as the year/month lists */
+.select-row{position:relative}
+.cal{top:calc(100% + 6px)}

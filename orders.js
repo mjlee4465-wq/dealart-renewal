@@ -1,41 +1,193 @@
 (function () {
   var form = document.getElementById('orderForm');
   if (!form) return;
-  var selY = document.getElementById('orderYear');
-  var selM = document.getElementById('orderMonth');
-  var selD = document.getElementById('orderDay');
+  var selY = document.getElementById('orderYear');   // 값을 담는 숨은 입력
+  var hidM = document.getElementById('orderMonth');
+  var hidD = document.getElementById('orderDay');
+  var btnY = document.getElementById('orderYearBtn');
+  var btnM = document.getElementById('orderMonthBtn');
+  var btnD = document.getElementById('orderDayBtn');
+  var ylist = document.getElementById('orderYearList');
+  var mlist = document.getElementById('orderMonthList');
+  var cal = document.getElementById('orderCalendar');
+  var field = cal.parentNode;
   var dateErr = document.getElementById('orderDateErr');
   var phone = document.getElementById('orderPhone');
   var phoneErr = document.getElementById('orderPhoneErr');
   var result = document.getElementById('orderResult');
   var resultDesc = document.getElementById('orderResultDesc');
   var today = new Date();
+  var curY = today.getFullYear(), curM = today.getMonth() + 1, curD = today.getDate();
+  var WEEK = ['일', '월', '화', '수', '목', '금', '토'];
 
-  function opt(value, label) { var o = document.createElement('option'); o.value = value; o.textContent = label; return o; }
-  function fill(sel, placeholder, from, to) {
-    var keep = sel.value;
-    sel.innerHTML = '';
-    sel.appendChild(opt('', placeholder));
-    for (var i = from; i <= to; i++) sel.appendChild(opt(String(i), String(i)));
-    if (keep && Number(keep) >= from && Number(keep) <= to) sel.value = keep;
-  }
-  // 연도: 올해부터 2년 전까지. 일: 고른 연·월의 마지막 날까지
-  fill(selY, '년', today.getFullYear() - 2, today.getFullYear());
-  // 최신 연도가 먼저 보이도록 뒤집는다
-  (function () { var first = selY.firstChild, rest = Array.prototype.slice.call(selY.children, 1).reverse(); rest.forEach(function (o) { selY.appendChild(o); }); selY.insertBefore(first, selY.firstChild); })();
-  fill(selM, '월', 1, 12);
-  fill(selD, '일', 1, 31);
-
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
   function daysIn(y, m) { return new Date(y, m, 0).getDate(); }
-  function refreshDays() {
-    var y = Number(selY.value), m = Number(selM.value);
-    fill(selD, '일', 1, y && m ? daysIn(y, m) : 31);
-  }
-  selY.addEventListener('change', function () { refreshDays(); clearDate(); });
-  selM.addEventListener('change', function () { refreshDays(); clearDate(); });
-  selD.addEventListener('change', clearDate);
+  function isFuture(y, m, d) { return new Date(y, m - 1, d) > new Date(curY, curM - 1, curD); }
+  function year() { return Number(selY.value) || curY; }
 
-  // 휴대폰 번호는 입력하는 동안 010-0000-0000 형태로 맞춘다
+  /* ---------- 팝업은 한 번에 하나만 열린다 ---------- */
+  var openedBy = null;
+  function closeAll(except) {
+    if (except !== 'y') shut(ylist, btnY);
+    if (except !== 'm') shut(mlist, btnM);
+    if (except !== 'd') shut(cal, btnD);
+  }
+  function shut(pop, btn) { if (!pop.hidden) { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); } }
+  function reveal(pop, btn) { pop.hidden = false; btn.setAttribute('aria-expanded', 'true'); openedBy = btn; }
+
+  /* ---------- 년·월: 둥근 목록 (목록에는 값만 있고 '년'·'월' 항목은 없다) ---------- */
+  function fillList(ul, values, labelOf, attr) {
+    values.forEach(function (v) {
+      var li = document.createElement('li');
+      li.setAttribute('role', 'option'); li.setAttribute('tabindex', '-1');
+      li.setAttribute(attr, String(v)); li.setAttribute('aria-selected', 'false');
+      li.textContent = labelOf(v);
+      ul.appendChild(li);
+    });
+  }
+  var maxY = curY + 1, minY = curY - 2; // 내년까지 고를 수 있다
+  var yearValues = []; for (var yy = maxY; yy >= minY; yy--) yearValues.push(yy);
+  var monthValues = []; for (var mm = 1; mm <= 12; mm++) monthValues.push(mm);
+  fillList(ylist, yearValues, function (v) { return String(v); }, 'data-year');
+  fillList(mlist, monthValues, function (v) { return v + '월'; }, 'data-month');
+
+  // 올해를 골랐다면 아직 오지 않은 달은 고를 수 없게 흐리게 표시한다
+  function refreshMonthList() {
+    Array.prototype.forEach.call(mlist.children, function (li) {
+      li.setAttribute('aria-disabled', 'false');
+    });
+  }
+  function markSelected(ul, attr, v) {
+    Array.prototype.forEach.call(ul.children, function (li) { li.setAttribute('aria-selected', li.getAttribute(attr) === String(v) ? 'true' : 'false'); });
+  }
+  function openList(ul, btn, key, attr, selected) {
+    closeAll(key);
+    if (key === 'm') refreshMonthList();
+    reveal(ul, btn);
+    var cur = ul.querySelector('[' + attr + '="' + selected + '"]') || ul.querySelector('li:not([aria-disabled="true"])');
+    if (cur) { cur.focus(); if (cur.scrollIntoView) cur.scrollIntoView({ block: 'nearest' }); }
+  }
+  function closeList(ul, btn, returnFocus) { shut(ul, btn); if (returnFocus) btn.focus(); }
+
+
+  function setYear(v) {
+    selY.value = v ? String(v) : '';
+    btnY.firstChild.textContent = v ? v + '년' : '년'; btnY.classList.toggle('is-empty', !v);
+    markSelected(ylist, 'data-year', v || '');
+  }
+  function setMonth(v) {
+    hidM.value = v ? String(v) : '';
+    btnM.firstChild.textContent = v ? v + '월' : '월'; btnM.classList.toggle('is-empty', !v);
+    markSelected(mlist, 'data-month', v || '');
+  }
+  function setDay(v) {
+    hidD.value = v ? String(v) : '';
+    btnD.firstChild.textContent = v ? v + '일' : '일'; btnD.classList.toggle('is-empty', !v);
+  }
+  // 년·월이 바뀌었을 때 고른 날이 없는 날짜이거나 미래가 되면 일만 비운다
+  function revalidate() {
+    var y = Number(selY.value), m = Number(hidM.value), d = Number(hidD.value);
+    if (y && m && d && new Date(y, m - 1, d).getMonth() !== m - 1) setDay('');
+    clearDate();
+  }
+
+  // 처음에는 모두 비운 상태로 시작한다 (뒤로 가기 등으로 숨은 값이 남아 있어도 버튼 표시와 어긋나지 않게)
+  setYear(''); setMonth(''); setDay('');
+
+  btnY.addEventListener('click', function () { if (ylist.hidden) openList(ylist, btnY, 'y', 'data-year', selY.value); else closeList(ylist, btnY, false); });
+  btnM.addEventListener('click', function () { if (mlist.hidden) openList(mlist, btnM, 'm', 'data-month', hidM.value); else closeList(mlist, btnM, false); });
+  ylist.addEventListener('click', function (e) {
+    var li = e.target.closest('li'); if (!li) return;
+    setYear(li.getAttribute('data-year')); revalidate(); closeList(ylist, btnY, true);
+  });
+  mlist.addEventListener('click', function (e) {
+    var li = e.target.closest('li'); if (!li || li.getAttribute('aria-disabled') === 'true') return;
+    if (!selY.value) setYear(curY); // 년도를 아직 안 골랐다면 올해로 맞춘다
+    setMonth(li.getAttribute('data-month')); revalidate(); closeList(mlist, btnM, true);
+  });
+  function listKeys(ul, btn, attr, apply) {
+    ul.addEventListener('keydown', function (e) {
+      var items = Array.prototype.slice.call(ul.children).filter(function (li) { return li.getAttribute('aria-disabled') !== 'true'; });
+      var i = items.indexOf(document.activeElement);
+      if (e.key === 'Escape') { e.preventDefault(); closeList(ul, btn, true); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); items[Math.min(items.length - 1, i + 1)].focus(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); items[Math.max(0, i - 1)].focus(); }
+      else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (i >= 0) { apply(items[i].getAttribute(attr)); closeList(ul, btn, true); } }
+      else if (e.key === 'Tab') { closeList(ul, btn, false); }
+    });
+  }
+  listKeys(ylist, btnY, 'data-year', function (v) { setYear(v); revalidate(); });
+  listKeys(mlist, btnM, 'data-month', function (v) { if (!selY.value) setYear(curY); setMonth(v); revalidate(); });
+
+  /* ---------- 일: 달력 (년도·월은 위에서 따로 고르므로 달력에는 일만 고르는 칸이 있다) ---------- */
+  var viewM = curM, viewY = curY;
+  function renderCal() {
+    var y = viewY, m = viewM, first = new Date(y, m - 1, 1).getDay(), total = daysIn(y, m);
+    var selM = Number(hidM.value), selD = Number(hidD.value);
+    var html = '<div class="cal-head">'
+      + '<button type="button" class="cal-nav" data-nav="-1" aria-label="이전 달"' + (y <= minY && m <= 1 ? ' disabled' : '') + '>‹</button>'
+      + '<strong class="cal-title" aria-live="polite">' + m + '월</strong>'
+      + '<button type="button" class="cal-nav" data-nav="1" aria-label="다음 달"' + (y >= maxY && m >= 12 ? ' disabled' : '') + '>›</button>'
+      + '</div><div class="cal-week" aria-hidden="true">' + WEEK.map(function (w, i) { return '<span' + (i === 0 ? ' class="sun"' : '') + '>' + w + '</span>'; }).join('') + '</div>'
+      + '<div class="cal-grid" role="grid">';
+    for (var i = 0; i < first; i++) html += '<span class="cal-pad"></span>';
+    for (var d = 1; d <= total; d++) {
+      var off = false, on = selM === m && selD === d;
+      html += '<button type="button" class="cal-day' + (on ? ' on' : '') + (new Date(y, m - 1, d).getDay() === 0 ? ' sun' : '') + '" data-day="' + d + '"'
+        + (off ? ' disabled' : '') + (on ? ' aria-pressed="true"' : '') + ' aria-label="' + m + '월 ' + d + '일">' + d + '</button>';
+    }
+    html += '</div>';
+    cal.innerHTML = html;
+  }
+  function openCal() {
+    closeAll('d');
+    viewY = year();
+    viewM = Number(hidM.value) || (viewY === curY ? curM : 12);
+    renderCal(); reveal(cal, btnD);
+    var target = cal.querySelector('.cal-day.on') || cal.querySelector('.cal-day:not([disabled])');
+    if (target) target.focus();
+  }
+  function closeCal(returnFocus) { shut(cal, btnD); if (returnFocus) btnD.focus(); }
+  btnD.addEventListener('click', function () { if (cal.hidden) openCal(); else closeCal(false); });
+
+  cal.addEventListener('click', function (e) {
+    var nav = e.target.closest('.cal-nav');
+    if (nav) {
+      var dir = nav.getAttribute('data-nav');
+      viewM += Number(dir);
+      if (viewM > 12) { viewM = 1; viewY += 1; }   // 12월 → 다음 해 1월
+      else if (viewM < 1) { viewM = 12; viewY -= 1; } // 1월 → 이전 해 12월
+      if (String(viewY) !== selY.value) { setYear(viewY); revalidate(); } // 달력에는 년도가 없으므로 위쪽 년 칸으로 바뀐 해를 보여준다
+      renderCal();
+      (cal.querySelector('[data-nav="' + dir + '"]:not([disabled])') || cal.querySelector('.cal-nav:not([disabled])')).focus();
+      return;
+    }
+    var day = e.target.closest('.cal-day');
+    if (!day || day.disabled) return;
+    setYear(viewY);
+    setMonth(viewM); setDay(day.getAttribute('data-day'));
+    clearDate(); closeCal(true);
+  });
+  cal.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { e.preventDefault(); closeCal(true); return; }
+    var cur = document.activeElement;
+    if (!cur || !cur.classList.contains('cal-day')) return;
+    var days = Array.prototype.slice.call(cal.querySelectorAll('.cal-day:not([disabled])'));
+    var i = days.indexOf(cur), step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
+    if (step === undefined) return;
+    e.preventDefault();
+    var next = days[Math.max(0, Math.min(days.length - 1, i + step))];
+    if (next) next.focus();
+  });
+  // 팝업 안에서 다시 그려지는 버튼(달 이동)은 클릭 뒤 문서에서 빠지므로, 클릭 시작 시점의 경로로 안쪽 클릭인지 판단한다.
+  document.addEventListener('click', function (e) {
+    if (cal.hidden && ylist.hidden && mlist.hidden) return;
+    var path = e.composedPath ? e.composedPath() : [];
+    var inside = path.length ? path.indexOf(field) !== -1 : field.contains(e.target);
+    if (!inside) closeAll();
+  });
+
+  /* ---------- 휴대폰 번호 ---------- */
   function formatPhone(v) {
     var d = v.replace(/\D/g, '').slice(0, 11);
     if (d.length < 4) return d;
@@ -46,24 +198,20 @@
 
   function show(el, msg, inputs) { el.textContent = msg; el.hidden = false; inputs.forEach(function (i) { i.setAttribute('aria-invalid', 'true'); }); }
   function clear(input, el) { el.hidden = true; el.textContent = ''; input.removeAttribute('aria-invalid'); }
-  function clearDate() { dateErr.hidden = true; dateErr.textContent = ''; [selY, selM, selD].forEach(function (s) { s.removeAttribute('aria-invalid'); }); }
-  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function clearDate() { dateErr.hidden = true; dateErr.textContent = ''; [btnY, btnM, btnD].forEach(function (s) { s.removeAttribute('aria-invalid'); }); }
 
+  /* ---------- 조회 ---------- */
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-    result.hidden = true;
+    result.hidden = true; closeAll();
     clearDate(); clear(phone, phoneErr);
     var bad = null;
-    var y = Number(selY.value), m = Number(selM.value), d = Number(selD.value);
+    var y = Number(selY.value), m = Number(hidM.value), d = Number(hidD.value);
     if (!y || !m || !d) {
-      show(dateErr, '주문 날짜를 선택해 주세요.', [selY, selM, selD].filter(function (s) { return !s.value; }));
-      bad = [selY, selM, selD].filter(function (s) { return !s.value; })[0];
-    } else {
-      var picked = new Date(y, m - 1, d);
-      var startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      if (picked.getMonth() !== m - 1) { show(dateErr, '존재하지 않는 날짜입니다.', [selD]); bad = selD; }
-      else if (picked > startOfToday) { show(dateErr, '오늘 이후의 날짜는 선택할 수 없습니다.', [selY, selM, selD]); bad = selY; }
-    }
+      var missing = [];
+      if (!y) missing.push(btnY); if (!m) missing.push(btnM); if (!d) missing.push(btnD);
+      show(dateErr, '주문 날짜를 선택해 주세요.', missing); bad = missing[0];
+    } else if (new Date(y, m - 1, d).getMonth() !== m - 1) { show(dateErr, '존재하지 않는 날짜입니다.', [btnD]); bad = btnD; }
     var digits = phone.value.replace(/\D/g, '');
     if (!/^01\d{8,9}$/.test(digits)) { show(phoneErr, '휴대폰 번호를 정확히 입력해 주세요. (예: 010-1234-5678)', [phone]); bad = bad || phone; }
     if (bad) { bad.focus(); return; }
