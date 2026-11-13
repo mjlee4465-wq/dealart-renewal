@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<title>꽃·선물 | DEALART 딜아트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="header">
+    <div class="header-top">
+      <a class="logo" href="index.html">DEALART</a>
+      <div class="header-actions">
+        <a class="icon-btn" href="brands.html" aria-label="브랜드 찾기"><img src="assets/imgIcon.svg" width="19" height="19" alt=""></a>
+        <a class="icon-btn" href="#" aria-label="고객센터"><img src="assets/imgIcon1.svg" width="20" height="20" alt=""></a>
+      </div>
+    </div>
+    <nav class="cat-nav" aria-label="모바일 카테고리">
+      <a href="index.html">전체</a>
+      <a href="restaurant.html">맛집·도시락</a>
+      <a href="cake.html">케이크·디저트</a>
+      <a class="active" href="flower.html" aria-current="page">꽃·선물</a>
+      <a href="fruit.html">과일·프리미엄 식품</a>
+      <a href="#">리빙</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="cat-intro">
+      <h1 class="h2">꽃·선물</h1>
+      <p class="cat-desc">마음을 전하는 꽃다발과 프리미엄 선물을 원하는 날짜에 예약해 보세요.</p>
+      <div class="chips" id="chips" role="tablist" aria-label="세부 카테고리">
+        <button class="chip-btn on" type="button" data-cat="all">전체</button>
+        <button class="chip-btn" type="button" data-cat="꽃·선물">꽃·선물</button>
+        <button class="chip-btn" type="button" data-cat="프리미엄 과일·선물">프리미엄 과일·선물</button>
+      </div>
+    </section>
+
+    <section class="brands cat-brands">
+      <div class="brand-grid" id="brandGrid">
+        <a class="card" data-cat="꽃·선물" href="#"><div class="card-img"><img src="assets/imgImage13.png" alt=""></div><div class="card-body"><span class="chip">꽃·선물</span><div class="title-row"><strong>에끌로르 플라워</strong></div><p class="card-desc">마음을 전하는 꽃다발과 플라워 선물.</p><div class="meta"><b>오픈 예정</b><span>&nbsp;</span></div></div></a>
+        <a class="card" data-cat="프리미엄 과일·선물" href="#"><div class="card-img"><img src="assets/imgImage11.png" alt=""></div><div class="card-body"><span class="chip">프리미엄 과일·선물</span><div class="title-row"><strong>프룻대디</strong><span class="status">예약 주문</span></div><p class="card-desc">엄선한 제철 과일과 프리미엄 과일 선물세트.</p><div class="meta"><b>&nbsp;</b><span>&nbsp;</span></div></div></a>
+      </div>
+    </section>
+
+    <section class="cat-corp">
+      <div class="corp-banner">
+        <p class="cb-eyebrow">CORPORATE ORDER</p>
+        <p class="cb-title">꽃·선물 단체주문</p>
+        <p class="cb-desc">행사 꽃과 감사 선물 구성을 일정에 맞춰 상담해 드립니다.</p>
+        <a class="cb-link" href="#">단체주문 알아보기 →</a>
+      </div>
+      <a class="btn kakao" href="#">카카오톡으로 단체주문 상담하기</a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="f-inner">
+      <p class="f-logo">DEALART</p>
+      <p class="f-tag">엄선한 프리미엄 브랜드를 원하는 날에.</p>
+      <button class="f-biz" type="button">사업자 정보 <img src="assets/imgIcon7.svg" width="14" height="14" alt=""></button>
+      <ul class="f-links">
+        <li>이용약관</li><li>개인정보처리방침</li><li>사업자정보 확인</li><li>고객문의</li><li>Instagram</li>
+      </ul>
+      <p class="f-copy">Copyright © DEALART</p>
+    </div>
+  </footer>
+</div>
+
+<a class="kakao-fab" href="#" aria-label="카카오톡 상담"><img src="assets/kakao.svg" width="26" height="26" alt=""></a>
+<nav class="tabbar" aria-label="하단 메뉴">
+  <a href="index.html"><span class="tab-ico"><img src="assets/nav1.svg" width="18" height="18" alt=""></span><span class="lbl">홈</span></a>
+  <a href="brands.html"><span class="tab-ico"><img src="assets/nav2.svg" width="18" height="18" alt=""></span><span class="lbl">브랜드</span></a>
+  <a href="categories.html" class="active" aria-current="page"><span class="tab-ico"><img src="assets/nav3.svg" width="18" height="18" alt=""></span><span class="lbl">카테고리</span></a>
+  <a href="#" data-order-tab data-count="0"><span class="tab-ico"><img src="assets/nav4.svg" width="18" height="18" alt=""><b class="tab-badge" hidden>0</b></span><span class="lbl">주문조회</span></a>
+</nav>
+
+<script>
+(function () {
+  var chips = document.querySelectorAll('.chip-btn');
+  var cards = document.querySelectorAll('#brandGrid .card');
+  chips.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var cat = b.getAttribute('data-cat');
+      chips.forEach(function (c) { c.classList.toggle('on', c === b); });
+      cards.forEach(function (card) { card.hidden = !(cat === 'all' || card.getAttribute('data-cat') === cat); });
+    });
+  });
+})();
+</script>
+<script src="tabbar.js"></script>
+</body>
+</html>

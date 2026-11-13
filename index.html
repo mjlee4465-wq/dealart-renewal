@@ -18,16 +18,16 @@
     <div class="header-top">
       <a class="logo" href="#">DEALART</a>
       <div class="header-actions">
-        <a class="icon-btn" href="#" aria-label="브랜드 찾기"><img src="assets/imgIcon.svg" width="19" height="19" alt=""></a>
+        <a class="icon-btn" href="brands.html" aria-label="브랜드 찾기"><img src="assets/imgIcon.svg" width="19" height="19" alt=""></a>
         <a class="icon-btn" href="#" aria-label="고객센터"><img src="assets/imgIcon1.svg" width="20" height="20" alt=""></a>
       </div>
     </div>
     <nav class="cat-nav" aria-label="모바일 카테고리">
-      <a class="active" href="#">전체</a>
-      <a href="#">맛집·도시락</a>
-      <a href="#">케이크·디저트</a>
-      <a href="#">꽃·선물</a>
-      <a href="#">과일·프리미엄 식품</a>
+      <a class="active" href="index.html" aria-current="page">전체</a>
+      <a href="restaurant.html">맛집·도시락</a>
+      <a href="cake.html">케이크·디저트</a>
+      <a href="flower.html">꽃·선물</a>
+      <a href="fruit.html">과일·프리미엄 식품</a>
       <a href="#">리빙</a>
     </nav>
   </header>
@@ -192,12 +192,13 @@
 
 <a class="kakao-fab" href="#" aria-label="카카오톡 상담"><img src="assets/kakao.svg" width="26" height="26" alt=""></a>
 <nav class="tabbar" aria-label="하단 메뉴">
-  <a href="#"><img src="assets/nav1.svg" width="18" height="18" alt=""><span>홈</span></a>
-  <a href="#"><img src="assets/nav2.svg" width="18" height="18" alt=""><span>브랜드</span></a>
-  <a href="#"><img src="assets/nav3.svg" width="18" height="18" alt=""><span>카테고리</span></a>
-  <a href="#"><img src="assets/nav4.svg" width="18" height="18" alt=""><span>주문조회</span></a>
+  <a href="index.html" class="active" aria-current="page"><span class="tab-ico"><img src="assets/nav1.svg" width="18" height="18" alt=""></span><span class="lbl">홈</span></a>
+  <a href="brands.html"><span class="tab-ico"><img src="assets/nav2.svg" width="18" height="18" alt=""></span><span class="lbl">브랜드</span></a>
+  <a href="categories.html"><span class="tab-ico"><img src="assets/nav3.svg" width="18" height="18" alt=""></span><span class="lbl">카테고리</span></a>
+  <a href="#" data-order-tab data-count="0"><span class="tab-ico"><img src="assets/nav4.svg" width="18" height="18" alt=""><b class="tab-badge" hidden>0</b></span><span class="lbl">주문조회</span></a>
 </nav>
 
 <script src="main.js"></script>
+<script src="tabbar.js"></script>
 </body>
 </html>
