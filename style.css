@@ -225,3 +225,41 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 /* 상단 카테고리 탭: 화면보다 길면 오른쪽 끝을 흐리게 해서 더 있다는 것을 보여준다 */
 .cat-nav.has-more{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent)}
 .cat-nav.has-more.at-end{-webkit-mask-image:none;mask-image:none}
+
+/* ---- order lookup page ---- */
+.order-lookup{padding:24px 16px 0}
+.order-card{display:flex;flex-direction:column;gap:16px;padding:20px;background:#fff;border:1px solid var(--line);border-radius:18px}
+.field{display:flex;flex-direction:column;gap:8px}
+.field label{font-family:var(--font-plex);font-weight:500;font-size:12px;line-height:19px;color:var(--ink-72)}
+.field input{height:48px;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:#fff;font:400 14px/22px var(--font-plex);color:var(--ink)}
+.field input::placeholder{color:var(--ink-50)}
+.field input:focus-visible{outline:2px solid var(--ink);outline-offset:1px;border-color:var(--ink)}
+.field input[aria-invalid="true"]{border-color:#c8412f}
+.field-err{font-family:var(--font-plex);font-size:12px;line-height:19px;color:#c8412f}
+.field-err[hidden]{display:none}
+.btn.primary{background:var(--ink);color:#fff;border:0;min-height:54px;cursor:pointer;font-family:inherit}
+.btn.primary:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.order-hint{font-family:var(--font-plex);font-size:12px;line-height:19px;color:var(--ink-60)}
+.order-hint a{text-decoration:underline;color:var(--ink)}
+.order-result{margin-top:16px;padding:20px;background:var(--bg-muted);border-radius:14px}
+.order-result[hidden]{display:none}
+.or-title{font-weight:500;font-size:15px;line-height:22px}
+.or-desc{padding-top:4px;font-size:13px;line-height:20.8px;color:var(--ink-72);overflow-wrap:anywhere}
+.or-link{display:inline-block;margin-top:12px;font-weight:700;font-size:13px;line-height:20px}
+.order-steps{padding:40px 16px 0}
+.steps-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px 16px;padding-top:16px;list-style:none}
+.steps-grid li{display:flex;flex-direction:column;gap:4px}
+.steps-grid strong{font-weight:500;font-size:15px;line-height:24px;letter-spacing:-.16px}
+.steps-grid span{font-size:13px;line-height:20.8px;letter-spacing:-.16px;color:var(--ink-60)}
+.order-help{padding:40px 16px 64px;display:flex;flex-direction:column;gap:12px}
+.order-help p{font-size:13px;line-height:20.8px;color:var(--ink-72)}
+
+/* ---- order date dropdowns ---- */
+.date-field{border:0;padding:0;margin:0;min-width:0}
+.date-field legend{padding:0 0 8px;font-family:var(--font-plex);font-weight:500;font-size:12px;line-height:19px;color:var(--ink-72)}
+.select-row{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:8px}
+.select-row select{width:100%;min-width:0;height:48px;padding:0 32px 0 14px;border:1px solid var(--line);border-radius:10px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' stroke='%231B3D31' stroke-opacity='.7' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center;font:400 14px/22px var(--font-plex);color:var(--ink);-webkit-appearance:none;appearance:none;cursor:pointer}
+.select-row select:invalid{color:var(--ink-50)}
+.select-row select option{color:var(--ink)}
+.select-row select:focus-visible{outline:2px solid var(--ink);outline-offset:1px;border-color:var(--ink)}
+.select-row select[aria-invalid="true"]{border-color:#c8412f}
