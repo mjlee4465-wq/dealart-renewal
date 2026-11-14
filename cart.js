@@ -64,7 +64,6 @@
     line.appendChild(st);
     var pr = el('div', 'ct-pr');
     pr.appendChild(el('strong', 'ct-price', won(it.price * it.qty)));
-    pr.appendChild(el('span', 'ct-unit', '개당 ' + won(it.price)));
     line.appendChild(pr);
     li.appendChild(line);
     var sh = el('div', 'ct-shipline');
