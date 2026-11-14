@@ -1,14 +1,17 @@
 (function () {
   'use strict';
   var PRICE = 12900; // 예시 가격 (실제 가격은 주문 페이지 기준)
-  var ITEMS = {
-    1: { name: '일본식 도시락', chip: '대표' },
-    2: { name: '상품명 (예시) 2', chip: '메뉴' }, 3: { name: '상품명 (예시) 3', chip: '메뉴' },
-    4: { name: '상품명 (예시) 4', chip: '메뉴' }, 5: { name: '상품명 (예시) 5', chip: '메뉴' }
+  var BRANDS = {
+    suzuran: { name: '스즈란테이', page: 'brand-suzuran.html', image: 'assets/imgImage6.png', items: ['일본식 도시락'] },
+    obok: { name: '오복수산', page: 'brand-obok.html', image: 'assets/imgImage7.png', items: ['카이센동'] }
   };
+  var qs = location.search, bm = /[?&]b=([a-z]+)/.exec(qs), B = BRANDS[bm ? bm[1] : 'suzuran'] || BRANDS.suzuran;
+  var ITEMS = {};
+  for (var n = 1; n <= 5; n++) ITEMS[n] = { name: B.items[n - 1] || '상품명 (예시) ' + n, chip: n === 1 ? '대표' : '메뉴' };
   var $ = function (id) { return document.getElementById(id); };
   var m = /[?&]p=(\d)/.exec(location.search), it = ITEMS[m ? m[1] : 1] || ITEMS[1];
-  document.title = it.name + ' | 스즈란테이 | DEALART 딜아트';
+  document.title = it.name + ' | ' + B.name + ' | DEALART 딜아트';
+  $('pdImg').src = B.image; $('pdBack').href = B.page; $('pdKeep').href = B.page; $('pdBack').setAttribute('aria-label', B.name + '로 돌아가기');
   $('pdName').textContent = it.name; $('pdChip').textContent = it.chip; $('pdImg').alt = it.name;
   var won = function (n) { return n.toLocaleString('ko-KR') + '원'; };
   var qty = 1;
@@ -21,14 +24,14 @@
   function say(s) { var t = $('bdToast'); t.textContent = s; t.hidden = false; clearTimeout(say.k); say.k = setTimeout(function () { t.hidden = true; }, 2000); }
   $('pdShare').addEventListener('click', function () {
     var url = location.href;
-    if (navigator.share) { navigator.share({ title: it.name + ' | 스즈란테이', url: url }).catch(function () {}); }
+    if (navigator.share) { navigator.share({ title: it.name + ' | ' + B.name, url: url }).catch(function () {}); }
     else if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(function () { say('링크를 복사했어요'); }, function () { say('링크를 복사하지 못했어요'); });
     else say('링크를 복사하지 못했어요');
   });
   // 장바구니: 이 브라우저(localStorage)에만 저장된다
   $('pdOrder').addEventListener('click', function () {
     var ship = document.querySelector('input[name=ship]:checked');
-    var line = { brand: '스즈란테이', name: it.name, qty: qty, price: PRICE, image: 'assets/imgImage6.png', ship: ship ? ship.value : '' };
+    var line = { brand: B.name, name: it.name, qty: qty, price: PRICE, image: B.image, ship: ship ? ship.value : '' };
     try {
       var cart = JSON.parse(localStorage.getItem('dealart.cart') || '[]');
       if (!Array.isArray(cart)) cart = [];

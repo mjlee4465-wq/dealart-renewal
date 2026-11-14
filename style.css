@@ -622,3 +622,15 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .ct-macts{display:grid;gap:8px;padding-top:16px}
 .ct-macts .btn{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:999px;font-size:14px;text-decoration:none}
 .ct-tabs button{padding:12px 8px 13px}
+
+/* ---- cart fab ---- */
+.cart-fab{position:fixed;z-index:41;width:48px;height:48px;border-radius:50%;background:#fff;color:var(--ink);display:grid;place-items:center;border:1px solid var(--line);box-shadow:0 4px 3px rgba(0,0,0,.1),0 2px 2px rgba(0,0,0,.1);bottom:calc(var(--tabbar-h) + 16px + 48px + 12px + env(safe-area-inset-bottom));right:max(12px,calc(50% - 215px + 12px));transition:bottom .28s cubic-bezier(.32,.72,0,1)}
+.cart-fab.is-low{bottom:calc(16px + 48px + 12px + env(safe-area-inset-bottom))}
+.cart-fab:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.cart-fab-badge{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:var(--ink);color:#fff;font:600 11px/20px var(--font-plex);text-align:center}
+.cart-fab-badge[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){.cart-fab{transition:none}}
+
+/* cart fab: stronger contrast */
+.cart-fab{background:var(--ink);color:#fff;border:0}
+.cart-fab-badge{background:#fff;color:var(--ink);border:1.5px solid var(--ink);line-height:17px}

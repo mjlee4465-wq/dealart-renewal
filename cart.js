@@ -1,7 +1,8 @@
 (function () {
   'use strict';
   var KEY = 'dealart.cart';
-  var BRAND_URL = { '스즈란테이': 'https://suzurantei.dealart.co.kr/' }; // 브랜드별 주문 페이지 (알려진 곳만)
+  var BRAND_URL = { '스즈란테이': 'https://suzurantei.dealart.co.kr/', '오복수산': 'https://oboksusan.dealart.co.kr/' };
+  var BRAND_PAGE = { '스즈란테이': 'brand-suzuran.html', '오복수산': 'brand-obok.html' }; // 브랜드별 주문 페이지 (알려진 곳만)
   var $ = function (id) { return document.getElementById(id); };
   var won = function (n) { return Number(n).toLocaleString('ko-KR') + '원'; };
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
@@ -83,7 +84,7 @@
       cb.addEventListener('change', function () { g.items.forEach(function (it) { it.sel = cb.checked; }); save(); render(); });
       lab.appendChild(cb); lab.appendChild(el('span', 'ct-box'));
       head.appendChild(lab);
-      var name = el('a', 'ct-gname', g.brand); name.href = g.brand === '스즈란테이' ? 'brand-suzuran.html' : 'brands.html';
+      var name = el('a', 'ct-gname', g.brand); name.href = BRAND_PAGE[g.brand] || 'brands.html';
       head.appendChild(name);
       head.appendChild(el('span', 'ct-gcount', g.items.length + '개 상품'));
       sec.appendChild(head);
@@ -156,17 +157,22 @@
 
   /* 탭: 주문 / 자주산상품 / 찜한상품 */
   var tabs = Array.prototype.slice.call(document.querySelectorAll('#ctTabs [role=tab]'));
-  function favOn() { try { return localStorage.getItem('dealart.fav.suzuran') === '1'; } catch (e) { return false; } }
+  var FAVS = [
+    { key: 'dealart.fav.suzuran', name: '스즈란테이', kind: '일식·도시락 · 예약 주문', page: 'brand-suzuran.html', image: 'assets/imgImage6.png' },
+    { key: 'dealart.fav.obok', name: '오복수산', kind: '일식·해산물 · 예약 주문', page: 'brand-obok.html', image: 'assets/imgImage7.png' }
+  ];
+  function liked() { return FAVS.filter(function (f) { try { return localStorage.getItem(f.key) === '1'; } catch (e) { return false; } }); }
   function renderFav() {
-    var on = favOn(), list = $('ctFavList'); list.textContent = '';
-    $('ctFavCount').textContent = on ? 1 : 0; $('ctFavEmpty').hidden = on;
-    if (!on) return;
-    var li = el('li', 'ct-item'), a = el('a', 'ct-fav'); a.href = 'brand-suzuran.html';
-    var th = el('div', 'ct-thumb'); var img = el('img'); img.src = 'assets/imgImage6.png'; img.alt = ''; th.appendChild(img); a.appendChild(th);
-    var info = el('div', 'ct-right');
-    info.appendChild(el('p', 'ct-ship', '스즈란테이'));
-    info.appendChild(el('p', 'ct-kind', '일식·도시락 · 예약 주문'));
-    a.appendChild(info); li.appendChild(a); list.appendChild(li);
+    var on = liked(), list = $('ctFavList'); list.textContent = '';
+    $('ctFavCount').textContent = on.length; $('ctFavEmpty').hidden = on.length > 0;
+    on.forEach(function (f) {
+      var li = el('li', 'ct-item'), a = el('a', 'ct-fav'); a.href = f.page;
+      var th = el('div', 'ct-thumb'); var img = el('img'); img.src = f.image; img.alt = ''; th.appendChild(img); a.appendChild(th);
+      var info = el('div', 'ct-right');
+      info.appendChild(el('p', 'ct-ship', f.name));
+      info.appendChild(el('p', 'ct-kind', f.kind));
+      a.appendChild(info); li.appendChild(a); list.appendChild(li);
+    });
   }
   function select(i, focus) {
     tab = i;

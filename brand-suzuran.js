@@ -6,6 +6,13 @@
   function paint() { var i = Math.round(slides.scrollLeft / (slides.clientWidth || 1)); Array.prototype.forEach.call(dots, function (d, j) { d.classList.toggle('on', j === i); }); }
   slides.addEventListener('scroll', function () { requestAnimationFrame(paint); }, { passive: true });
 
+  /* 장바구니 수량 배지 */
+  (function () {
+    var n = 0;
+    try { JSON.parse(localStorage.getItem('dealart.cart') || '[]').forEach(function (c) { n += Number(c && c.qty) || 0; }); } catch (e) {}
+    var bd = $('pdBadge'); if (bd) { bd.hidden = n === 0; bd.textContent = n > 99 ? '99+' : String(n); }
+  })();
+
   /* 찜 (이 기기에만 저장) */
   var KEY = 'dealart.fav.suzuran', heart = $('bdHeart');
   function setHeart(on) { heart.setAttribute('aria-pressed', on ? 'true' : 'false'); heart.setAttribute('aria-label', on ? '찜 해제' : '찜하기'); }

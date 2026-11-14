@@ -2,12 +2,19 @@
   var bar = document.querySelector('.tabbar');
   if (!bar) return;
   var fab = document.querySelector('.kakao-fab');
+  var cartFab = document.querySelector('.cart-fab');
+  if (cartFab) { // 장바구니 수량 배지 (이 기기에 저장된 장바구니)
+    var n = 0;
+    try { JSON.parse(localStorage.getItem('dealart.cart') || '[]').forEach(function (c) { n += Number(c && c.qty) || 0; }); } catch (e) {}
+    var bd = cartFab.querySelector('.cart-fab-badge'); bd.hidden = n === 0; bd.textContent = n > 99 ? '99+' : String(n);
+  }
 
   /* 1) 스크롤을 내리면 숨기고, 올리면 다시 보여준다 */
   var lastY = window.pageYOffset, ticking = false, THRESHOLD = 8, MIN_Y = 80;
   function setHidden(hidden) {
     bar.classList.toggle('is-hidden', hidden);
     if (fab) fab.classList.toggle('is-low', hidden);
+    if (cartFab) cartFab.classList.toggle('is-low', hidden);
   }
   function onScroll() {
     var y = window.pageYOffset;
