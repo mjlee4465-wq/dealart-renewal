@@ -29,58 +29,73 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  /* ---------- 조회된 주문 ---------- */
-  function renderOrder(o, preview) {
-    var card = el('article', 'ov-card');
-    var top = el('div', 'ov-top');
+  /* ---------- 조회된 주문: 주문내역 목록 (날짜 → 상품 카드) ---------- */
+  var DAYS = ['일', '월', '화', '수', '목', '금', '토'];
+  function arrival(s) { // '2026-01-05' → '1/5(월)'
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || '')); if (!m) return '';
+    var d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    return (d.getMonth() + 1) + '/' + d.getDate() + '(' + DAYS[d.getDay()] + ')';
+  }
+  function won(n) { return Number(n).toLocaleString('ko-KR') + '원'; }
+
+  function renderOrder(o) {
+    var group = el('section', 'od');
     var status = Math.max(0, Math.min(3, Number(o.status) || 0));
-    top.appendChild(el('span', 'ov-badge', STEPS[status]));
-    if (o.number) top.appendChild(el('span', 'ov-number', '주문번호 ' + o.number));
-    card.appendChild(top);
+    var head = el('div', 'od-date');
+    head.appendChild(el('strong', null, dot(o.date)));
+    if (o.number) head.appendChild(el('span', 'od-no', '주문번호 ' + o.number));
+    group.appendChild(head);
 
-    var ol = el('ol', 'stepper');
-    ol.setAttribute('aria-label', '주문 진행 단계');
-    STEPS.forEach(function (s, i) {
-      var li = el('li', 'step' + (i < status ? ' done' : '') + (i === status ? ' now' : ''));
-      if (i === status) li.setAttribute('aria-current', 'step');
-      li.appendChild(el('span', 'step-dot', i < status ? '✓' : String(i + 1)));
-      li.appendChild(el('span', 'step-label', s));
-      ol.appendChild(li);
+    (o.items || []).forEach(function (it) {
+      var card = el('article', 'oc');
+      card.setAttribute('data-search', ((it.brand || '') + ' ' + (it.name || '')).toLowerCase());
+      var line = el('div', 'oc-status');
+      var when = arrival(o.deliveryDate);
+      line.appendChild(el('strong', null, STEPS[status]));
+      if (when) line.appendChild(el('span', null, when + (status === 3 ? ' 도착' : ' 도착 예정')));
+      if (it.brand) line.appendChild(el('span', 'chip', it.brand));
+      card.appendChild(line);
+
+      var row = el('div', 'oc-row');
+      var thumb = el('div', 'oc-thumb');
+      if (it.image && /^assets\//.test(it.image)) { var img = el('img'); img.src = it.image; img.alt = ''; thumb.appendChild(img); }
+      row.appendChild(thumb);
+      var info = el('div', 'oc-info');
+      info.appendChild(el('p', 'oc-name', it.name));
+      var sub = (it.price ? won(it.price) + ' · ' : '') + (it.qty || 1) + '개';
+      info.appendChild(el('p', 'oc-sub', sub));
+      row.appendChild(info);
+      card.appendChild(row);
+
+      var acts = el('div', 'oc-acts');
+      var a1 = el('a', 'oc-btn', '배송·주문 문의'); a1.href = KAKAO; a1.target = '_blank'; a1.rel = 'noopener noreferrer';
+      var a2 = el('a', 'oc-btn', '다시 주문하기'); a2.href = 'brands.html';
+      acts.appendChild(a1); acts.appendChild(a2);
+      card.appendChild(acts);
+      group.appendChild(card);
     });
-    card.appendChild(ol);
-
-    var dl = el('dl', 'ov-info');
-    [['주문 날짜', dot(o.date)], ['배송 예정일', dot(o.deliveryDate)], ['배송 방법', o.method]].forEach(function (r) {
-      if (!r[1]) return;
-      var row = el('div', 'ov-row'); row.appendChild(el('dt', null, r[0])); row.appendChild(el('dd', null, r[1])); dl.appendChild(row);
-    });
-    card.appendChild(dl);
-
-    if (o.items && o.items.length) {
-      var list = el('ul', 'ov-items');
-      o.items.forEach(function (it) {
-        var li = el('li');
-        var left = el('div', 'ov-item-main');
-        if (it.brand) left.appendChild(el('span', 'chip', it.brand));
-        left.appendChild(el('strong', null, it.name));
-        li.appendChild(left);
-        li.appendChild(el('span', 'ov-qty', '수량 ' + (it.qty || 1)));
-        list.appendChild(li);
-      });
-      card.appendChild(list);
-    }
-    return card;
+    return group;
   }
 
   function showFound(orders, input, preview) {
     var box = $('foundBody'); box.textContent = '';
     $('foundMeta').textContent = dot(input.date) + ' 주문 · ' + mask(input.phone);
     $('previewFound').hidden = !preview;
-    orders.forEach(function (o) { box.appendChild(renderOrder(o, preview)); });
+    $('foundSearch').value = ''; $('foundNoMatch').hidden = true;
+    orders.forEach(function (o) { box.appendChild(renderOrder(o)); });
     setVisible('found');
-    document.querySelector('.cat-intro .cat-desc').textContent = '조회된 주문 ' + orders.length + '건';
     focusTitle('found');
   }
+
+  // 주문한 상품 검색: 상품명·브랜드명에 들어 있는 글자로 카드를 걸러낸다
+  $('foundSearch').addEventListener('input', function () {
+    var q = this.value.trim().toLowerCase(), shown = 0;
+    Array.prototype.forEach.call(document.querySelectorAll('#foundBody .oc'), function (card) {
+      var ok = !q || card.getAttribute('data-search').indexOf(q) !== -1; card.hidden = !ok; if (ok) shown++;
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('#foundBody .od'), function (g) { g.hidden = !g.querySelector('.oc:not([hidden])'); });
+    $('foundNoMatch').hidden = shown !== 0;
+  });
 
   /* ---------- 조회된 주문 없음 ---------- */
   function showEmpty(input, preview) {
@@ -101,7 +116,7 @@
   if (q) {
     var sample = { date: '2026-12-20', phone: '01012345678' };
     if (q[1] === 'found') {
-      showFound([{ date: '2026-12-20', number: 'DA-SAMPLE', status: 1, deliveryDate: '2026-12-25', method: '지정일 배송', items: [{ brand: '스즈란테이', name: '일식 도시락 (예시 상품)', qty: 2 }, { brand: '프룻대디', name: '제철 과일 선물세트 (예시 상품)', qty: 1 }] }], sample, true);
+      showFound([{ date: '2026-12-20', number: 'DA-SAMPLE', status: 1, deliveryDate: '2026-12-25', method: '지정일 배송', items: [{ brand: '스즈란테이', name: '일식 도시락 (예시 상품)', qty: 2, price: 12900, image: 'assets/imgImage6.png' }, { brand: '프룻대디', name: '제철 과일 선물세트 (예시 상품)', qty: 1, price: 39900, image: 'assets/imgImage11.png' }] }], sample, true);
     } else { showEmpty(sample, true); }
     window.scrollTo(0, 0);
   }

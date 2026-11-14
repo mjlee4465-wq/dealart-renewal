@@ -23,7 +23,8 @@ window.DEALART_ORDERS = {
   testCases: [
     { date: '2026-01-01', phone: '01011111111', result: 'found',
       order: { date: '2026-01-01', number: 'DA-TEST-0001', status: 1, deliveryDate: '2026-01-05', method: '지정일 배송',
-               items: [{ brand: '스즈란테이', name: '일식 도시락 (테스트 상품)', qty: 2 }, { brand: '프룻대디', name: '제철 과일 선물세트 (테스트 상품)', qty: 1 }] } },
+               items: [{ brand: '스즈란테이', name: '일식 도시락 (테스트 상품)', qty: 2, price: 12900, image: 'assets/imgImage6.png' },
+                       { brand: '프룻대디', name: '제철 과일 선물세트 (테스트 상품)', qty: 1, price: 39900, image: 'assets/imgImage11.png' }] } },
     { date: '2026-01-01', phone: '01000000000', result: 'empty' }
   ]
 };
