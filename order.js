@@ -6,7 +6,7 @@ function dealartOrderBoot() {
     { v: '퀵배송', date: '퀵 배송 희망일' },
     { v: '전국택배', date: '발송 희망일' }
   ];
-  var BRAND_PAGE = { '스즈란테이': 'brand-suzuran.html', '오복수산': 'brand-obok.html' };
+  var BRAND_PAGE = { '스즈란테이': 'brand-suzuran.html', '오복수산': 'brand-obok.html', '안주마을': 'brand-anju.html' };
   var DAYS = ['일', '월', '화', '수', '목', '금', '토'];
   var $ = function (id) { return document.getElementById(id); };
   var won = function (n) { return Number(n).toLocaleString('ko-KR') + '원'; };

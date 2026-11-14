@@ -1,8 +1,8 @@
 (function () {
   'use strict';
   var KEY = 'dealart.cart';
-  var BRAND_URL = { '스즈란테이': 'https://suzurantei.dealart.co.kr/', '오복수산': 'https://oboksusan.dealart.co.kr/' };
-  var BRAND_PAGE = { '스즈란테이': 'brand-suzuran.html', '오복수산': 'brand-obok.html' }; // 브랜드별 주문 페이지 (알려진 곳만)
+  var BRAND_URL = { '스즈란테이': 'https://suzurantei.dealart.co.kr/', '오복수산': 'https://oboksusan.dealart.co.kr/', '안주마을': 'https://anjumaeul.dealart.co.kr/' };
+  var BRAND_PAGE = { '스즈란테이': 'brand-suzuran.html', '오복수산': 'brand-obok.html', '안주마을': 'brand-anju.html' }; // 브랜드별 주문 페이지 (알려진 곳만)
   var $ = function (id) { return document.getElementById(id); };
   var won = function (n) { return Number(n).toLocaleString('ko-KR') + '원'; };
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
@@ -135,7 +135,8 @@
   var tabs = Array.prototype.slice.call(document.querySelectorAll('#ctTabs [role=tab]'));
   var FAVS = [
     { key: 'dealart.fav.suzuran', name: '스즈란테이', kind: '일식·도시락 · 예약 주문', page: 'brand-suzuran.html', image: 'assets/imgImage6.png' },
-    { key: 'dealart.fav.obok', name: '오복수산', kind: '일식·해산물 · 예약 주문', page: 'brand-obok.html', image: 'assets/imgImage7.png' }
+    { key: 'dealart.fav.obok', name: '오복수산', kind: '일식·해산물 · 예약 주문', page: 'brand-obok.html', image: 'assets/imgImage7.png' },
+    { key: 'dealart.fav.anju', name: '안주마을', kind: '한식·안주 · 예약 주문', page: 'brand-anju.html', image: 'assets/imgImage8.png' }
   ];
   function liked() { return FAVS.filter(function (f) { try { return localStorage.getItem(f.key) === '1'; } catch (e) { return false; } }); }
   function renderFav() {

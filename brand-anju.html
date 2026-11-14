@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1b3d31">
+<title>안주마을 | DEALART 딜아트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="page-bd">
+<div class="app bd">
+
+  <header class="bd-hero" aria-label="안주마을 사진">
+    <div class="bd-slides" id="bdSlides">
+      <img src="assets/imgImage8.png" alt="안주마을 대표 안주">
+      <img src="assets/imgImage3.png" alt="tvN 수요미식회 안주마을 소개 영상 화면">
+    </div>
+    <div class="bd-bar">
+      <a class="bd-round" href="brands.html" aria-label="브랜드 목록으로 돌아가기"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M13.5 4.5 7 11l6.5 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <div class="pd-actions">
+        <button class="bd-round" id="bdShare" type="button" aria-label="링크 공유"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 12.5V3m0 0L6.5 6.5M10 3l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10v5.5A1.5 1.5 0 0 0 6.5 17h7a1.5 1.5 0 0 0 1.5-1.5V10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+        <a class="bd-round pd-cart" href="cart.html" aria-label="장바구니 보기"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M2.5 3.5h2l1.6 8.2a1 1 0 0 0 1 .8h6.3a1 1 0 0 0 1-.8l1.1-5.7H5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="16" r="1.1" fill="currentColor"/><circle cx="14" cy="16" r="1.1" fill="currentColor"/></svg><span class="pd-badge" id="pdBadge" hidden></span></a>
+      </div>
+    </div>
+    <div class="bd-dots" id="bdDots" aria-hidden="true"><span class="on"></span><span></span></div>
+  </header>
+
+  <main>
+    <section class="bd-head">
+      <div class="bd-title-row">
+        <h1 class="bd-name">안주마을</h1>
+        <button class="bd-heart" id="bdHeart" type="button" aria-pressed="false" aria-label="찜하기"><svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 22.5s-8.5-5.1-8.5-11.2A4.8 4.8 0 0 1 13 8.6a4.8 4.8 0 0 1 8.5 2.7c0 6.1-8.5 11.2-8.5 11.2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div class="bd-meta">
+        <span class="chip">한식·안주</span>
+        <span class="status">예약 주문</span>
+        <span class="bd-proof">tvN 〈수요미식회〉 · 실내포차 편 소개 (2017)</span>
+      </div>
+      <p class="bd-lead">개성 있는 제철 안주와 한식 메뉴를 예약 주문으로 만나보세요.</p>
+    </section>
+
+    <section class="bd-info">
+      <dl>
+        <div><dt>주문 방식</dt><dd>예약 주문 · 날짜 지정</dd></div>
+        <div><dt>배송</dt><dd>지정일 배송 · 퀵배송 · 전국택배<small>상품과 지역에 따라 가능한 배송 방법이 다릅니다.</small></dd></div>
+      </dl>
+    </section>
+
+    <section class="bd-sec bd-media-top" id="media">
+      <h2 class="h2">방송·매체 소개</h2>
+      <a class="bd-media" href="https://www.youtube.com/watch?v=SsyYPNsJogI&amp;t=1s" target="_blank" rel="noopener noreferrer">
+        <img src="assets/imgImage3.png" alt="">
+        <span class="bd-media-text">
+          <strong>tvN 〈수요미식회〉</strong>
+          <span>안주마을 · 실내포차 편 소개 (2017) · 영상 보기</span>
+        </span>
+      </a>
+    </section>
+
+
+    <div class="bd-tabs" id="bdTabs" role="tablist" aria-label="안주마을 메뉴">
+      <button type="button" role="tab" id="tab-menu" aria-controls="panel-menu" aria-selected="true" class="on">메뉴</button>
+      <button type="button" role="tab" id="tab-popular" aria-controls="panel-popular" aria-selected="false">인기메뉴</button>
+      <button type="button" role="tab" id="tab-new" aria-controls="panel-new" aria-selected="false">NEW메뉴</button>
+      <button type="button" role="tab" id="tab-group" aria-controls="panel-group" aria-selected="false">단체·행사</button>
+    </div>
+
+    <section class="bd-sec bd-panel" id="panel-menu" role="tabpanel" aria-labelledby="tab-menu">
+      <h2 class="h2">메뉴</h2>
+        <article class="bd-menu">
+          <div class="bd-menu-text">
+            <span class="chip">대표</span>
+            <h3>대표 안주</h3>
+            <p class="bd-menu-desc">모임과 행사, 선물용 주문에 어울립니다.</p>
+            <p class="bd-menu-price">가격과 구성은 주문 페이지에서 확인하세요.</p>
+          </div>
+          <div class="bd-menu-img">
+            <img src="assets/imgImage8.png" alt="대표 안주">
+            <a class="bd-add" href="product.html?b=anju&amp;p=1" aria-label="대표 안주 예약 주문하기"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+          </div>
+        </article>
+        <article class="bd-menu">
+          <div class="bd-menu-text">
+            <span class="chip">메뉴</span>
+            <h3>상품명 (예시) 2</h3>
+            <p class="bd-menu-desc">모임과 행사, 선물용 주문에 어울립니다.</p>
+            <p class="bd-menu-price">가격과 구성은 주문 페이지에서 확인하세요.</p>
+          </div>
+          <div class="bd-menu-img">
+            <img src="assets/imgImage8.png" alt="상품명 (예시) 2">
+            <a class="bd-add" href="product.html?b=anju&amp;p=2" aria-label="상품명 (예시) 2 예약 주문하기"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+          </div>
+        </article>
+        <article class="bd-menu">
+          <div class="bd-menu-text">
+            <span class="chip">메뉴</span>
+            <h3>상품명 (예시) 3</h3>
+            <p class="bd-menu-desc">모임과 행사, 선물용 주문에 어울립니다.</p>
+            <p class="bd-menu-price">가격과 구성은 주문 페이지에서 확인하세요.</p>
+          </div>
+          <div class="bd-menu-img">
+            <img src="assets/imgImage8.png" alt="상품명 (예시) 3">
+            <a class="bd-add" href="product.html?b=anju&amp;p=3" aria-label="상품명 (예시) 3 예약 주문하기"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+          </div>
+        </article>
+        <article class="bd-menu">
+          <div class="bd-menu-text">
+            <span class="chip">메뉴</span>
+            <h3>상품명 (예시) 4</h3>
+            <p class="bd-menu-desc">모임과 행사, 선물용 주문에 어울립니다.</p>
+            <p class="bd-menu-price">가격과 구성은 주문 페이지에서 확인하세요.</p>
+          </div>
+          <div class="bd-menu-img">
+            <img src="assets/imgImage8.png" alt="상품명 (예시) 4">
+            <a class="bd-add" href="product.html?b=anju&amp;p=4" aria-label="상품명 (예시) 4 예약 주문하기"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+          </div>
+        </article>
+        <article class="bd-menu">
+          <div class="bd-menu-text">
+            <span class="chip">메뉴</span>
+            <h3>상품명 (예시) 5</h3>
+            <p class="bd-menu-desc">모임과 행사, 선물용 주문에 어울립니다.</p>
+            <p class="bd-menu-price">가격과 구성은 주문 페이지에서 확인하세요.</p>
+          </div>
+          <div class="bd-menu-img">
+            <img src="assets/imgImage8.png" alt="상품명 (예시) 5">
+            <a class="bd-add" href="product.html?b=anju&amp;p=5" aria-label="상품명 (예시) 5 예약 주문하기"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+          </div>
+        </article>
+    </section>
+
+    <section class="bd-sec bd-panel" id="panel-popular" role="tabpanel" aria-labelledby="tab-popular" hidden>
+      <h2 class="h2">인기메뉴</h2>
+        <article class="bd-menu">
+          <div class="bd-menu-text">
+            <span class="chip">인기</span>
+            <h3>대표 안주</h3>
+            <p class="bd-menu-desc">모임과 행사, 선물용 주문에 어울립니다.</p>
+            <p class="bd-menu-price">가격과 구성은 주문 페이지에서 확인하세요.</p>
+          </div>
+          <div class="bd-menu-img">
+            <img src="assets/imgImage8.png" alt="대표 안주">
+            <a class="bd-add" href="product.html?b=anju&amp;p=1" aria-label="대표 안주 예약 주문하기"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+          </div>
+        </article>
+    </section>
+
+    <section class="bd-sec bd-panel" id="panel-new" role="tabpanel" aria-labelledby="tab-new" hidden>
+      <h2 class="h2">NEW메뉴</h2>
+        <article class="bd-menu">
+          <div class="bd-menu-text">
+            <span class="chip">NEW</span>
+            <h3>대표 안주</h3>
+            <p class="bd-menu-desc">모임과 행사, 선물용 주문에 어울립니다.</p>
+            <p class="bd-menu-price">가격과 구성은 주문 페이지에서 확인하세요.</p>
+          </div>
+          <div class="bd-menu-img">
+            <img src="assets/imgImage8.png" alt="대표 안주">
+            <a class="bd-add" href="product.html?b=anju&amp;p=1" aria-label="대표 안주 예약 주문하기"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+          </div>
+        </article>
+    </section>
+
+    <section class="bd-sec bd-panel" id="panel-group" role="tabpanel" aria-labelledby="tab-group" hidden>
+      <h2 class="h2">단체·행사</h2>
+        <article class="bd-menu">
+          <div class="bd-menu-text">
+            <span class="chip">단체</span>
+            <h3>대표 안주</h3>
+            <p class="bd-menu-desc">단체·행사 주문은 카카오톡으로 상담해 주세요.</p>
+            <p class="bd-menu-price">가격과 구성은 주문 페이지에서 확인하세요.</p>
+          </div>
+          <div class="bd-menu-img">
+            <img src="assets/imgImage8.png" alt="대표 안주">
+            <a class="bd-add" href="product.html?b=anju&amp;p=1" aria-label="대표 안주 예약 주문하기"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+          </div>
+        </article>
+      <a class="bd-kakao" href="https://open.kakao.com/o/gbaveXvi" target="_blank" rel="noopener noreferrer">카카오톡으로 단체·행사 주문 상담하기</a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="f-inner">
+      <p class="f-logo">DEALART</p>
+      <p class="f-tag">엄선한 프리미엄 브랜드를 원하는 날에.</p>
+      <ul class="f-bizinfo">
+        <li>딜아트(dealart) · 대표 윤기섭</li>
+        <li>(06974) 서울특별시 동작구 흑석로 84 중앙대학교 108관 103호</li>
+        <li>사업자 등록번호 291-01-03541</li>
+        <li>통신판매업 신고 2025-서울강남-02875</li>
+        <li>고객문의 카카오톡 상담 · anakistks@naver.com</li>
+      </ul>
+      <ul class="f-links">
+        <li><a href="https://dealart.co.kr/" target="_blank" rel="noopener noreferrer">이용약관</a></li><li><a href="https://dealart.co.kr/" target="_blank" rel="noopener noreferrer">개인정보처리방침</a></li><li><a href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=2910103541" target="_blank" rel="noopener noreferrer">사업자정보 확인</a></li><li><a href="https://open.kakao.com/o/gbaveXvi" target="_blank" rel="noopener noreferrer">고객문의</a></li><li><a href="https://www.instagram.com/dealart.co.kr/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+      </ul>
+      <p class="f-copy">Copyright © DEALART</p>
+    </div>
+  </footer>
+</div>
+
+<div class="bd-toast" id="bdToast" role="status" aria-live="polite" hidden></div>
+<script src="brand-anju.js"></script>
+</body>
+</html>
