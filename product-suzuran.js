@@ -28,7 +28,7 @@
   // 장바구니: 이 브라우저(localStorage)에만 저장된다
   $('pdOrder').addEventListener('click', function () {
     var ship = document.querySelector('input[name=ship]:checked');
-    var line = { brand: '스즈란테이', name: it.name, qty: qty, price: PRICE, ship: ship ? ship.value : '' };
+    var line = { brand: '스즈란테이', name: it.name, qty: qty, price: PRICE, image: 'assets/imgImage6.png', ship: ship ? ship.value : '' };
     try {
       var cart = JSON.parse(localStorage.getItem('dealart.cart') || '[]');
       if (!Array.isArray(cart)) cart = [];
