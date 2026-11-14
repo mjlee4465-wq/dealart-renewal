@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f8f7f2">
+<title>주문하기 | DEALART 딜아트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="page-bd">
+<div class="app bd">
+  <header class="ct-top">
+    <a class="ct-back" id="odBack" href="cart.html" aria-label="장바구니로 돌아가기"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M13.5 4.5 7 11l6.5 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <h1 class="ct-title" id="odTitle">주문하기</h1>
+  </header>
+
+  <!-- 1) 주문서 작성 -->
+  <form class="od" id="odForm" novalidate>
+    <section class="od-empty" id="odEmpty" hidden>
+      <p class="ct-empty-t">주문할 상품이 없어요</p>
+      <p class="ct-empty-d">장바구니에서 주문할 상품을 선택해 주세요.</p>
+      <a class="btn outline" href="cart.html">장바구니로 가기</a>
+    </section>
+
+    <div id="odBody">
+      <p class="od-lead">브랜드마다 배송 방법·희망 날짜·주문자·받는 분을 따로 정할 수 있어요.</p>
+      <div id="odBrands"></div>
+
+      <section class="od-card od-sum" aria-labelledby="odSumT">
+        <h2 class="od-h" id="odSumT">결제 예정 금액</h2>
+        <ul class="ct-sumlist" id="odSumList"></ul>
+        <div class="ct-sum-row total"><span>합계</span><strong id="odTotal">0원</strong></div>
+        <p class="od-hint">배송비는 브랜드와 배송 방법에 따라 달라질 수 있어요. 최종 금액은 브랜드 확인 후 안내드려요.</p>
+      </section>
+
+      <label class="od-agree"><input type="checkbox" id="oAgree" required><span class="ct-box" aria-hidden="true"></span><span>주문 처리를 위해 이름·연락처·주소를 브랜드에 전달하는 것에 동의합니다. (필수)</span></label>
+      <p class="od-err" id="odErr" role="alert" hidden></p>
+    </div>
+  </form>
+
+  <!-- 2) 주문서 완성 -->
+  <section class="od od-done" id="odDone" hidden aria-labelledby="odDoneT">
+    <h2 class="od-done-t" id="odDoneT">주문서를 만들었어요</h2>
+    <p class="od-notice"><strong>아직 주문이 접수된 것은 아니에요.</strong> 아래 주문서를 카카오톡으로 보내 주시면 브랜드별로 확인하고 결제·일정을 안내드려요.</p>
+    <pre class="od-text" id="odText" tabindex="0" aria-label="주문서 내용"></pre>
+    <div class="od-acts">
+      <button class="btn primary" type="button" id="odCopy">주문서 복사하기</button>
+      <a class="btn kakao" id="odKakao" href="https://open.kakao.com/o/gbaveXvi" target="_blank" rel="noopener noreferrer">카카오톡으로 보내기</a>
+      <button class="btn outline" type="button" id="odEdit">주문서 수정하기</button>
+    </div>
+    <p class="od-hint">‘주문서 복사하기’를 누른 뒤 카카오톡 채팅방에 붙여넣어 보내 주세요.</p>
+  </section>
+</div>
+
+<div class="ct-foot" id="odFoot" hidden>
+  <div class="ct-sum"><span>결제 예정 금액<small id="odFootSub">브랜드 0곳</small></span><strong id="odFootTotal">0원</strong></div>
+  <button class="btn primary" id="odSubmit" type="submit" form="odForm"><span id="odSubmitT">주문서 만들기</span></button>
+</div>
+<div class="bd-toast" id="bdToast" role="status" aria-live="polite" hidden></div>
+<script src="order.js"></script>
+</body>
+</html>

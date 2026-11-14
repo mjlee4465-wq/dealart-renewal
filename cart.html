@@ -72,22 +72,9 @@
     <span>선택 상품 금액<small id="ctBrandN">브랜드 0곳</small></span>
     <strong id="ctTotal">0원</strong>
   </div>
-  <button class="btn primary" id="ctBuy" type="button"><span id="ctBuyT">총 0개 상품 주문하기</span></button>
+  <a class="btn primary" id="ctBuy" href="order.html"><span id="ctBuyT">총 0개 상품 주문하기</span></a>
 </div>
 
-<div class="pd-modal" id="ctModal" hidden>
-  <div class="pd-modal-bg" data-close></div>
-  <div class="pd-dialog ct-dialog" role="dialog" aria-modal="true" aria-labelledby="ctModalT" tabindex="-1">
-    <p class="pd-dialog-t" id="ctModalT">주문 확인</p>
-    <ul class="ct-mlist" id="ctMList"></ul>
-    <div class="ct-sum-row total"><span>합계</span><strong id="ctMTotal">0원</strong></div>
-    <p class="pd-sample">여러 브랜드를 한 번에 결제하는 통합 주문은 준비 중이에요. 카카오톡으로 선택한 상품 그대로 주문을 접수해 드려요.</p>
-    <div class="ct-macts">
-      <a class="btn primary" id="ctKakao" href="https://open.kakao.com/o/gbaveXvi" target="_blank" rel="noopener noreferrer">카카오톡으로 주문하기</a>
-      <button class="btn outline" id="ctMClose" type="button">닫기</button>
-    </div>
-  </div>
-</div>
 <div class="bd-toast" id="bdToast" role="status" aria-live="polite" hidden></div>
 <script src="cart.js"></script>
 </body>

@@ -124,32 +124,8 @@
     cart = cart.filter(function (it) { return !isSel(it); }); save(); render(); toast(n + '개 상품을 삭제했어요');
   });
 
-  /* 주문 확인 팝업: 선택한 브랜드별 금액을 보여주고, 한 번에 주문 접수 */
-  var lastFocus = null;
-  function openModal() {
-    var ml = $('ctMList'); ml.textContent = '';
-    render.brands.forEach(function (b) {
-      var li = el('li', 'ct-mrow');
-      li.appendChild(el('span', null, b.brand + ' (' + b.n + '개)'));
-      li.appendChild(el('strong', null, won(b.sum)));
-      if (BRAND_URL[b.brand]) { var a = el('a', 'ct-mlink', '브랜드 주문 페이지'); a.href = BRAND_URL[b.brand]; a.target = '_blank'; a.rel = 'noopener noreferrer'; li.appendChild(a); }
-      ml.appendChild(li);
-    });
-    $('ctMTotal').textContent = won(render.total);
-    lastFocus = document.activeElement; $('ctModal').hidden = false; document.body.style.overflow = 'hidden'; $('ctKakao').focus();
-  }
-  function closeModal() { $('ctModal').hidden = true; document.body.style.overflow = ''; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
-  $('ctBuy').addEventListener('click', function () { if (!this.classList.contains('is-off')) openModal(); });
-  $('ctMClose').addEventListener('click', closeModal);
-  $('ctModal').addEventListener('click', function (e) { if (e.target.hasAttribute('data-close')) closeModal(); });
-  document.addEventListener('keydown', function (e) {
-    if ($('ctModal').hidden) return;
-    if (e.key === 'Escape') { closeModal(); return; }
-    if (e.key === 'Tab') {
-      var f = Array.prototype.slice.call($('ctModal').querySelectorAll('a[href],button')), i = f.indexOf(document.activeElement);
-      e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
-    }
-  });
+  /* 주문하기: 선택한 상품만 주문서(order.html)로 */
+  $('ctBuy').addEventListener('click', function (e) { if (this.classList.contains('is-off')) { e.preventDefault(); toast('주문할 상품을 선택해 주세요'); } });
 
   $('ctBack').addEventListener('click', function (e) {
     if (document.referrer && document.referrer.indexOf(location.host) !== -1 && history.length > 1) { e.preventDefault(); history.back(); }
