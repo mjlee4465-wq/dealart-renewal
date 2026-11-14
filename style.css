@@ -733,3 +733,6 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .pd-price{float:right;font-weight:600;font-size:16px;line-height:24px}
 
 .pd-group+.pd-row{margin-top:8px}
+
+.od-fee{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:4px 0 2px;font-size:12px;line-height:18px;color:var(--ink-60)}
+.od-fee strong{font-weight:500;color:var(--ink-60)}

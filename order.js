@@ -41,6 +41,7 @@ function dealartOrderBoot() {
     items.forEach(function (it) { if (!map[it.brand]) { map[it.brand] = []; order.push(it.brand); } map[it.brand].push(it); });
     return order.map(function (b) { return { brand: b, items: map[b] }; });
   }
+  var SHIP_FEE = 10000; // 예시: 상품 1개당 배송비 예상 (장바구니와 동일)
   function shipGroups(list) {
     var seen = {}, out = [];
     METHODS.forEach(function (m) { var l = list.filter(function (it) { return it.ship === m.v; }); if (l.length) out.push({ ship: m.v, items: l }); });
@@ -78,6 +79,7 @@ function dealartOrderBoot() {
           ul.appendChild(li);
         });
         blk.appendChild(ul);
+        var fee = el('div', 'od-fee'); fee.appendChild(el('span', null, '배송비 예상')); fee.appendChild(el('strong', null, won(sg.items.length * SHIP_FEE))); blk.appendChild(fee);
         // 희망일 — 주문조회 페이지와 같은 년·월 목록 + 일 달력
         var meth = METHODS.filter(function (m) { return m.v === sg.ship; })[0];
         var host = el('div', 'od-date'); blk.appendChild(host);
@@ -111,11 +113,12 @@ function dealartOrderBoot() {
 
   function renderSum() {
     var list = $('odSumList'); list.textContent = '';
-    var gs = groupsByBrand(), total = 0;
+    var gs = groupsByBrand(), total = 0, cnt = 0;
     gs.forEach(function (g) {
-      var s = sub(g.items); total += s;
+      var s = sub(g.items); total += s; cnt += g.items.length;
       var li = el('li', 'ct-sum-row'); li.appendChild(el('span', null, g.brand + ' (' + g.items.length + '개 상품)')); li.appendChild(el('strong', null, won(s))); list.appendChild(li);
     });
+    var sf = el('li', 'ct-sum-row'); sf.appendChild(el('span', null, '배송비 예상 합계')); sf.appendChild(el('strong', null, won(cnt * SHIP_FEE))); list.appendChild(sf);
     $('odTotal').textContent = won(total); $('odFootTotal').textContent = won(total);
     $('odFootSub').textContent = '브랜드 ' + gs.length + '곳';
     $('odSubmitT').textContent = '결제하기';
