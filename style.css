@@ -453,7 +453,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .bd-banner span:not(.bd-bolt){flex:1}
 .bd-tabs{position:sticky;top:0;z-index:10;display:flex;gap:8px;margin-top:20px;padding:10px 16px;background:var(--bg-page);border-bottom:1px solid var(--line-10);overflow-x:auto;scrollbar-width:none}
 .bd-tabs::-webkit-scrollbar{display:none}
-.bd-tabs button{cursor:pointer;flex:none;display:flex;align-items:center;height:38px;padding:0 16px;border:1px solid var(--line);border-radius:999px;background:#fff;font-family:var(--font-plex);font-weight:500;font-size:13px}
+.bd-tabs button{cursor:pointer;flex:none;display:flex;align-items:center;height:38px;padding:0 20px;border:1px solid var(--line);border-radius:999px;background:#fff;font-family:var(--font-plex);font-weight:500;font-size:13px}
 .bd-tabs button.on{background:var(--ink);border-color:var(--ink);color:#fff}
 .bd-sec{padding:32px 16px 0}
 .bd-menu{display:flex;gap:16px;margin-top:16px;padding:18px 16px;background:#fff;border:1px solid var(--line);border-radius:20px}
@@ -497,10 +497,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .pd-desc{padding-top:6px;font-size:14px;line-height:22px;color:var(--ink-60)}
 .pd-row{display:flex;align-items:center;justify-content:space-between;padding:24px 0 8px}
 .pd-row strong{font-weight:600;font-size:16px}
-.pd-stepper{display:flex;align-items:center;width:132px;height:48px;border:1px solid var(--line);border-radius:14px;background:#fff}
-.pd-stepper button{flex:none;width:44px;height:100%;font-size:20px;color:var(--ink)}
+.pd-stepper{display:flex;align-items:center;width:104px;height:38px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.pd-stepper button{flex:none;width:32px;height:100%;font-size:18px;color:var(--ink)}
 .pd-stepper button:disabled{color:#b9bfbb}
-.pd-stepper output{flex:1;text-align:center;font-weight:500;font-size:16px}
+.pd-stepper output{flex:1;text-align:center;font-weight:500;font-size:15px}
 .pd-stepper button:focus-visible,.pd-opt:focus-within{outline:2px solid var(--ink);outline-offset:2px}
 .pd-group{margin:0;padding:24px 0 0;border:0;min-width:0}
 .pd-group legend{float:left;width:100%;padding:0 0 8px;font-weight:600;font-size:16px;line-height:24px}

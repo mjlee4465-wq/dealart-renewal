@@ -118,7 +118,7 @@ function dealartOrderBoot() {
     });
     $('odTotal').textContent = won(total); $('odFootTotal').textContent = won(total);
     $('odFootSub').textContent = '브랜드 ' + gs.length + '곳';
-    $('odSubmitT').textContent = won(total) + ' 주문서 만들기';
+    $('odSubmitT').textContent = '결제하기';
   }
 
   /* ---------- 브랜드별 주문자·받는 분 ---------- */
