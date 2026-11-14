@@ -31,6 +31,7 @@
   }
   function sub(items) { return items.reduce(function (s, it) { return isSel(it) ? s + it.price * it.qty : s; }, 0); }
 
+  var SHIP_FEE = 10000; // 예시: 모든 배송방법 통일 (실제 배송비는 브랜드 확인 후 안내)
   function renderItem(it) {
     var on = isSel(it);
     var li = el('li', 'ct-item');
@@ -66,6 +67,10 @@
     pr.appendChild(el('span', 'ct-unit', '개당 ' + won(it.price)));
     line.appendChild(pr);
     li.appendChild(line);
+    var sh = el('div', 'ct-shipline');
+    sh.appendChild(el('span', null, '배송방법  ' + (it.ship || '지정일 배송')));
+    sh.appendChild(el('span', null, '배송비 예상  ' + won(SHIP_FEE)));
+    li.appendChild(sh);
     return li;
   }
 
