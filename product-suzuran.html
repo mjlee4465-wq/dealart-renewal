@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1b3d31">
+<title>상품 상세 | 스즈란테이 | DEALART 딜아트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="page-bd">
+<div class="app bd">
+
+  <header class="pd-hero" aria-label="상품 사진">
+    <img id="pdImg" src="assets/imgImage6.png" alt="">
+    <div class="bd-bar">
+      <a class="bd-round" id="pdBack" href="brand-suzuran.html" aria-label="스즈란테이로 돌아가기"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M13.5 4.5 7 11l6.5 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <button class="bd-round" id="pdShare" type="button" aria-label="링크 공유"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 12.5V3m0 0L6.5 6.5M10 3l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10v5.5A1.5 1.5 0 0 0 6.5 17h7a1.5 1.5 0 0 0 1.5-1.5V10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+    </div>
+  </header>
+
+  <main class="pd">
+    <p class="pd-note">메뉴 사진은 실제 조리된 음식과 다를 수 있어요</p>
+    <div class="pd-tags"><span class="chip" id="pdChip">대표</span><span class="chip">예약 주문</span></div>
+    <h1 class="pd-name" id="pdName">일본식 도시락</h1>
+    <p class="pd-desc" id="pdDesc">모임과 행사, 선물용 주문에 어울립니다.</p>
+
+    <div class="pd-row">
+      <strong>수량</strong>
+      <div class="pd-stepper" role="group" aria-label="수량">
+        <button type="button" id="pdMinus" aria-label="수량 줄이기" disabled>−</button>
+        <output id="pdQty" aria-live="polite">1</output>
+        <button type="button" id="pdPlus" aria-label="수량 늘리기">+</button>
+      </div>
+    </div>
+
+    <fieldset class="pd-group">
+      <legend>가격 <span class="pd-req">필수</span></legend>
+      <label class="pd-opt"><input type="radio" name="size" value="1" checked><span class="pd-opt-t">1인분</span><span class="pd-opt-p" id="pdUnit"></span></label>
+      <p class="pd-sample">예시 가격입니다. 실제 가격과 구성은 주문 페이지에서 확인하세요.</p>
+    </fieldset>
+
+    <fieldset class="pd-group">
+      <legend>배송 방법 <span class="pd-req">필수</span></legend>
+      <label class="pd-opt"><input type="radio" name="ship" value="지정일 배송" checked><span class="pd-opt-t">지정일 배송</span><span class="pd-opt-p">+0원</span></label>
+      <label class="pd-opt"><input type="radio" name="ship" value="퀵배송"><span class="pd-opt-t">퀵배송</span><span class="pd-opt-p">+0원</span></label>
+      <label class="pd-opt"><input type="radio" name="ship" value="전국택배"><span class="pd-opt-t">전국택배</span><span class="pd-opt-p">+0원</span></label>
+      <p class="pd-sample">지원 상품·지역에 따라 선택할 수 있는 방법이 다릅니다.</p>
+    </fieldset>
+  </main>
+</div>
+
+<div class="bd-cta pd-cta"><button class="btn primary" id="pdOrder" type="button"><span id="pdTotal"></span> 장바구니 담기</button></div>
+<div class="bd-toast" id="bdToast" role="status" aria-live="polite" hidden></div>
+<script src="product-suzuran.js"></script>
+</body>
+</html>
