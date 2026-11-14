@@ -1,4 +1,4 @@
-(function () {
+function dealartOrderBoot() {
   'use strict';
   var KEY = 'dealart.cart';
   var METHODS = [
@@ -269,4 +269,10 @@
   /* ---------- 시작 ---------- */
   if (!items.length) { $('odEmpty').hidden = false; $('odBody').hidden = true; $('odFoot').hidden = true; }
   else { renderBrands(); $('odFoot').hidden = false; }
+}
+
+// 날짜 선택기 스크립트가 아직 없으면(예전 페이지가 캐시에 남아 있는 경우 등) 먼저 불러온 뒤 시작한다
+(function () {
+  if (window.DealartDatePicker) { dealartOrderBoot(); return; }
+  var s = document.createElement('script'); s.src = 'date-picker.js'; s.onload = dealartOrderBoot; document.head.appendChild(s);
 })();
