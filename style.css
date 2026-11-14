@@ -374,3 +374,13 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .ov-title:focus,.ov-title:focus-visible{outline:none}
 .order-help[hidden]{display:none}
 #viewFound .ov-meta{padding-top:0}
+
+/* ---- footer: expanded business info (matches Figma) ---- */
+.footer{background:var(--bg-muted);border-top:0}
+.f-logo{font-weight:500;font-size:15px;line-height:24px;letter-spacing:.2px;padding-top:32px}
+.f-tag{font-size:13px;line-height:20.8px;color:var(--ink-72);padding-top:8px}
+.f-bizinfo{margin:0;padding:10px 0 0;list-style:none}
+.f-bizinfo li{font-size:12px;line-height:22.4px;letter-spacing:-.16px;color:var(--ink-60);overflow-wrap:anywhere}
+.f-links{padding-top:20px}
+.f-copy{text-align:center;padding-top:22px}
+.f-links{gap:4px 16px}
