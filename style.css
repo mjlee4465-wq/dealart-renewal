@@ -719,3 +719,11 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .od-sub.is-mirror .od-f input:disabled{background:var(--bg-muted);color:var(--ink-72);cursor:not-allowed}
 .od-same.is-off{cursor:not-allowed}
 .od-contact>.od-hint{padding:0 0 4px}
+
+/* ---- order: shared date picker ---- */
+.od-brand{overflow:visible}
+.od-bhead{border-radius:19px 19px 0 0}
+.od-date{padding-top:14px}
+.od-date .date-field{position:relative}
+.od-date .date-field legend{padding:0 0 6px;font-weight:500;font-size:13px;line-height:20px;color:var(--ink-72)}
+.od-date .date-field{width:100%;box-sizing:border-box}

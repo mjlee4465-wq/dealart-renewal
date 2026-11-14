@@ -21,6 +21,7 @@
   } catch (e) { items = []; }
 
   var info = {}; // 브랜드별 주문자·받는 분
+  var pickers = []; // 배송 묶음별 날짜 선택기
   var sameLinks = []; // 받는 분 칸이 주문자 값을 따라가는(잠긴) 입력칸
   var dates = {}, memos = {}; // 브랜드|배송방법 별 희망일·요청사항
   var gk = function (b, s) { return b + '|' + s; };
@@ -47,7 +48,7 @@
   }
 
   function renderBrands() {
-    var box = $('odBrands'); box.textContent = ''; sameLinks = [];
+    var box = $('odBrands'); box.textContent = ''; sameLinks = []; pickers = [];
     groupsByBrand().forEach(function (g, bi) {
       var card = el('section', 'od-card od-brand'); card.setAttribute('aria-label', g.brand + ' 주문');
       var head = el('div', 'od-bhead');
@@ -77,13 +78,12 @@
           ul.appendChild(li);
         });
         blk.appendChild(ul);
-        // 희망일
+        // 희망일 — 주문조회 페이지와 같은 년·월 목록 + 일 달력
         var meth = METHODS.filter(function (m) { return m.v === sg.ship; })[0];
-        var f1 = el('div', 'od-f'); var l1 = el('label', null, meth.date); l1.setAttribute('for', id + 'd');
-        var d = el('input'); d.type = 'date'; d.id = id + 'd'; d.required = true; d.min = iso(minD); d.max = iso(maxD); d.value = dates[key] || '';
-        d.setAttribute('data-key', key); d.setAttribute('data-label', g.brand + ' ' + sg.ship + ' ' + meth.date);
-        d.addEventListener('input', function () { dates[key] = d.value; });
-        f1.appendChild(l1); f1.appendChild(d); blk.appendChild(f1);
+        var host = el('div', 'od-date'); blk.appendChild(host);
+        var label = g.brand + ' ' + meth.date;
+        var pk = window.DealartDatePicker.mount(host, { id: id, legend: meth.date, label: meth.date, min: minD, max: maxD, value: dates[key] || '', onChange: function (v) { dates[key] = v; } });
+        pickers.push({ brand: g.brand, key: key, label: label, api: pk });
         // 요청사항
         var f2 = el('div', 'od-f'); var l2 = el('label', null, '요청사항 (선택)'); l2.setAttribute('for', id + 'm');
         var m2 = el('input'); m2.id = id + 'm'; m2.type = 'text'; m2.maxLength = 100; m2.placeholder = '예: 도착 시간, 문 앞에 놓아 주세요'; m2.value = memos[key] || '';
@@ -203,11 +203,12 @@
         }
         if (!o.rAddr.trim()) return showErr($(pre + 'ra'), brand + ' 배송지 주소를 입력해 주세요.');
       }
-      var dEls = Array.prototype.slice.call(document.querySelectorAll('.od-brand')[gi].querySelectorAll('input[type=date]'));
-      for (var i = 0; i < dEls.length; i++) {
-        var d = dEls[i];
-        if (!d.value) return showErr(d, d.getAttribute('data-label') + '을(를) 선택해 주세요.');
-        if (d.value < iso(minD) || d.value > iso(maxD)) return showErr(d, d.getAttribute('data-label') + '은(는) 내일부터 120일 이내로 선택해 주세요.');
+      var mine = pickers.filter(function (p) { return p.brand === brand; });
+      for (var pi = 0; pi < mine.length; pi++) {
+        if (!mine[pi].api.getValue()) {
+          mine[pi].api.setInvalid(true);
+          var t = mine[pi].api.firstMissing(); showErr(t, mine[pi].label + '을(를) 선택해 주세요.'); return false;
+        }
       }
     }
     if (!$('oAgree').checked) return showErr($('oAgree'), '개인정보 전달에 동의해 주세요.');
