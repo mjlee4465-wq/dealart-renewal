@@ -113,6 +113,7 @@
     brands.forEach(function (b) {
       var li = el('li', 'ct-sum-row'); li.appendChild(el('span', null, b.brand + ' (' + b.n + '개)')); li.appendChild(el('strong', null, won(b.sum))); list.appendChild(li);
     });
+    if (n > 0) { var sf = el('li', 'ct-sum-row'); sf.appendChild(el('span', null, '배송비 예상 합계')); sf.appendChild(el('strong', null, won(n * SHIP_FEE))); list.appendChild(sf); }
     $('ctSumTotal').textContent = won(total); $('ctTotal').textContent = won(total);
     $('ctBrandN').textContent = '브랜드 ' + brands.length + '곳';
     $('ctBuyT').textContent = '총 ' + n + '개 상품 주문하기';
