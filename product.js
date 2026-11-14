@@ -18,7 +18,7 @@
   var qty = 1;
   function render() {
     $('pdQty').textContent = qty; $('pdMinus').disabled = qty <= 1; $('pdPlus').disabled = qty >= 99;
-    $('pdUnit').textContent = won(PRICE); $('pdTotal').textContent = won(PRICE * qty);
+    $('pdUnit').textContent = won(PRICE);
   }
   $('pdMinus').addEventListener('click', function () { if (qty > 1) { qty--; render(); } });
   $('pdPlus').addEventListener('click', function () { if (qty < 99) { qty++; render(); } });
