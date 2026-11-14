@@ -35,8 +35,32 @@
       var same = cart.filter(function (c) { return c.name === line.name && c.ship === line.ship; })[0];
       if (same) same.qty = Math.min(99, same.qty + line.qty); else cart.push(line);
       localStorage.setItem('dealart.cart', JSON.stringify(cart));
-      say('장바구니에 담았어요');
+      badge(); openModal();
     } catch (e) { say('장바구니에 담지 못했어요'); }
   });
+  function badge() {
+    var n = 0;
+    try { JSON.parse(localStorage.getItem('dealart.cart') || '[]').forEach(function (c) { n += Number(c.qty) || 0; }); } catch (e) {}
+    var b = $('pdBadge'); b.hidden = n === 0; b.textContent = n > 99 ? '99+' : String(n);
+  }
+  var lastFocus = null;
+  function openModal() {
+    lastFocus = document.activeElement; $('pdModal').hidden = false; document.body.style.overflow = 'hidden';
+    $('pdGoCart').focus();
+  }
+  function closeModal() {
+    $('pdModal').hidden = true; document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  $('pdModal').addEventListener('click', function (e) { if (e.target.hasAttribute('data-close')) closeModal(); });
+  document.addEventListener('keydown', function (e) {
+    if ($('pdModal').hidden) return;
+    if (e.key === 'Escape') { closeModal(); return; }
+    if (e.key === 'Tab') { // 팝업 안에서만 포커스 이동
+      var f = [$('pdGoCart'), $('pdKeep')], i = f.indexOf(document.activeElement);
+      e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
+    }
+  });
+  badge();
   render();
 })();

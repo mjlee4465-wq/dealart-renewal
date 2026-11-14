@@ -18,7 +18,10 @@
     <img id="pdImg" src="assets/imgImage6.png" alt="">
     <div class="bd-bar">
       <a class="bd-round" id="pdBack" href="brand-suzuran.html" aria-label="스즈란테이로 돌아가기"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M13.5 4.5 7 11l6.5 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-      <button class="bd-round" id="pdShare" type="button" aria-label="링크 공유"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 12.5V3m0 0L6.5 6.5M10 3l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10v5.5A1.5 1.5 0 0 0 6.5 17h7a1.5 1.5 0 0 0 1.5-1.5V10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+      <div class="pd-actions">
+        <button class="bd-round" id="pdShare" type="button" aria-label="링크 공유"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 12.5V3m0 0L6.5 6.5M10 3l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10v5.5A1.5 1.5 0 0 0 6.5 17h7a1.5 1.5 0 0 0 1.5-1.5V10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+        <a class="bd-round pd-cart" href="cart.html" aria-label="장바구니 보기"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M2.5 3.5h2l1.6 8.2a1 1 0 0 0 1 .8h6.3a1 1 0 0 0 1-.8l1.1-5.7H5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8" cy="16" r="1.1" fill="currentColor"/><circle cx="14" cy="16" r="1.1" fill="currentColor"/></svg><span class="pd-badge" id="pdBadge" hidden></span></a>
+      </div>
     </div>
   </header>
 
@@ -54,6 +57,16 @@
 </div>
 
 <div class="bd-cta pd-cta"><button class="btn primary" id="pdOrder" type="button"><span id="pdTotal"></span> 장바구니 담기</button></div>
+<div class="pd-modal" id="pdModal" hidden>
+  <div class="pd-modal-bg" data-close></div>
+  <div class="pd-dialog" role="dialog" aria-modal="true" aria-labelledby="pdModalT" tabindex="-1">
+    <p class="pd-dialog-t" id="pdModalT">장바구니에 상품을 담았습니다.</p>
+    <div class="pd-dialog-acts">
+      <a class="btn primary" id="pdGoCart" href="cart.html">장바구니 가기</a>
+      <a class="btn outline" id="pdKeep" href="brand-suzuran.html">계속 쇼핑</a>
+    </div>
+  </div>
+</div>
 <div class="bd-toast" id="bdToast" role="status" aria-live="polite" hidden></div>
 <script src="product-suzuran.js"></script>
 </body>
