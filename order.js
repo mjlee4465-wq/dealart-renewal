@@ -2,8 +2,8 @@ function dealartOrderBoot() {
   'use strict';
   var KEY = 'dealart.cart';
   var METHODS = [
-    { v: '퀵배송', date: '퀵 배송 희망일' },
-    { v: '전국택배', date: '발송 희망일' }
+    { v: '퀵배송', date: '퀵 배송 희망일', lead: 1 },    // 가장 빠른 희망일: 내일
+    { v: '전국택배', date: '발송 희망일', lead: 2 }   // 가장 빠른 희망일: 모레 (발송일 기준)
   ];
   var BRAND_PAGE = { '스즈란테이': 'brand-suzuran.html', '오복수산': 'brand-obok.html', '안주마을': 'brand-anju.html' };
   var DAYS = ['일', '월', '화', '수', '목', '금', '토'];
@@ -30,7 +30,11 @@ function dealartOrderBoot() {
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function iso(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
   var today = new Date(); today.setHours(0, 0, 0, 0);
-  var minD = new Date(today); minD.setDate(minD.getDate() + 1);
+  // 휴무일(예: 일요일)은 고를 수 없다. 실제 휴무 요일과 당일 마감 시각은 정책 확정 후 바꾼다.
+  var offLabel = function (d) { return d.getDay() === 0 ? '휴무' : ''; };
+  function minFor(m) { var d = new Date(today); d.setDate(d.getDate() + m.lead); return d; }
+  function firstAvail(m) { var d = minFor(m); while (offLabel(d)) d.setDate(d.getDate() + 1); return d; }
+  function validDate(v, m) { var x = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || ''); if (!x) return false; var d = new Date(+x[1], +x[2] - 1, +x[3]); return d >= minFor(m) && d <= maxD && !offLabel(d); }
   var maxD = new Date(today); maxD.setDate(maxD.getDate() + 120);
   function pretty(s) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); if (!m) return ''; var d = new Date(+m[1], +m[2] - 1, +m[3]); return m[1] + '.' + m[2] + '.' + m[3] + '(' + DAYS[d.getDay()] + ')'; }
 
@@ -83,8 +87,10 @@ function dealartOrderBoot() {
         var meth = METHODS.filter(function (m) { return m.v === sg.ship; })[0];
         var host = el('div', 'od-date'); blk.appendChild(host);
         var label = g.brand + ' ' + meth.date;
-        var pk = window.DealartDatePicker.mount(host, { id: id, legend: meth.date, label: meth.date, min: minD, max: maxD, value: dates[key] || '', onChange: function (v) { dates[key] = v; } });
-        pickers.push({ brand: g.brand, key: key, label: label, api: pk });
+        // 처음 열면 가능한 가장 빠른 날짜가 선택돼 있다
+        if (!validDate(dates[key], meth)) dates[key] = iso(firstAvail(meth));
+        var pk = window.DealartDatePicker.mount(host, { id: id, legend: meth.date, label: meth.date, min: minFor(meth), max: maxD, off: offLabel, value: dates[key], onChange: function (v) { dates[key] = v; var pe = host.querySelector('.od-ferr'); if (pe) { pe.remove(); updateBanner(); } } });
+        pickers.push({ brand: g.brand, key: key, label: label, api: pk, host: host });
         // 요청사항
         var f2 = el('div', 'od-f'); var l2 = el('label', null, '요청사항 (선택)'); l2.setAttribute('for', id + 'm');
         var m2 = el('input'); m2.id = id + 'm'; m2.type = 'text'; m2.maxLength = 100; m2.placeholder = '예: 도착 시간, 문 앞에 놓아 주세요'; m2.value = memos[key] || '';
@@ -184,88 +190,130 @@ function dealartOrderBoot() {
     return wrap;
   }
 
-  /* ---------- 검증 ---------- */
-  function showErr(input, msg) {
-    var e = $('odErr'); e.textContent = msg; e.hidden = false;
+  /* ---------- 검증 (모든 오류를 한 번에 표시) ---------- */
+  var errMsgs = { oName: '이름을 입력해 주세요', oPhone: '휴대폰 번호를 정확히 입력해 주세요', rName: '받는 분 이름을 입력해 주세요', rPhone: '받는 분 휴대폰 번호를 정확히 입력해 주세요', rAddr: '배송지 주소를 입력해 주세요', date: '희망일을 선택해 주세요', agree: '개인정보 전달에 동의해 주세요' };
+  function clearErrors() {
+    Array.prototype.forEach.call(document.querySelectorAll('.od-ferr'), function (n) { n.remove(); });
     Array.prototype.forEach.call(document.querySelectorAll('[aria-invalid]'), function (n) { n.removeAttribute('aria-invalid'); });
-    if (input) { input.setAttribute('aria-invalid', 'true'); input.focus(); try { input.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (x) {} }
-    return false;
+    pickers.forEach(function (p) { p.api.setInvalid(false); });
+    $('odErr').hidden = true;
   }
+  function updateBanner() {
+    var n = document.querySelectorAll('.od-ferr').length, e = $('odErr');
+    if (!n) { e.hidden = true; return; }
+    e.textContent = '입력하지 않은 항목이 ' + n + '개 있어요. 빨간 표시를 확인해 주세요.'; e.hidden = false;
+  }
+  function addErr(host, msg) { var p = el('p', 'od-ferr', msg); p.setAttribute('role', 'alert'); host.appendChild(p); return p; }
   function validate() {
-    var gs = groupsByBrand();
-    for (var gi = 0; gi < gs.length; gi++) {
-      var brand = gs[gi].brand, o = infoOf(brand), pre = 'c' + gi;
-      var own = gi === 0 || !o.likeFirst;
+    clearErrors();
+    var bad = [], gs = groupsByBrand();
+    function flag(input, key) { input.setAttribute('aria-invalid', 'true'); var f = input.closest('.od-f'); if (f) addErr(f, errMsgs[key]); bad.push(input); }
+    gs.forEach(function (g, gi) {
+      var o = infoOf(g.brand), pre = 'c' + gi, own = gi === 0 || !o.likeFirst;
       if (own) {
-        if (!o.oName.trim()) return showErr($(pre + 'on'), brand + ' 주문자 이름을 입력해 주세요.');
-        if (!phoneOk(o.oPhone)) return showErr($(pre + 'op'), brand + ' 주문자 휴대폰 번호를 확인해 주세요.');
+        if (!o.oName.trim()) flag($(pre + 'on'), 'oName');
+        if (!phoneOk(o.oPhone)) flag($(pre + 'op'), 'oPhone');
         if (!o.same) {
-          if (!o.rName.trim()) return showErr($(pre + 'rn'), brand + ' 받는 분 이름을 입력해 주세요.');
-          if (!phoneOk(o.rPhone)) return showErr($(pre + 'rp'), brand + ' 받는 분 휴대폰 번호를 확인해 주세요.');
+          if (!o.rName.trim()) flag($(pre + 'rn'), 'rName');
+          if (!phoneOk(o.rPhone)) flag($(pre + 'rp'), 'rPhone');
         }
-        if (!o.rAddr.trim()) return showErr($(pre + 'ra'), brand + ' 배송지 주소를 입력해 주세요.');
+        if (!o.rAddr.trim()) flag($(pre + 'ra'), 'rAddr');
       }
-      var mine = pickers.filter(function (p) { return p.brand === brand; });
-      for (var pi = 0; pi < mine.length; pi++) {
-        if (!mine[pi].api.getValue()) {
-          mine[pi].api.setInvalid(true);
-          var t = mine[pi].api.firstMissing(); showErr(t, mine[pi].label + '을(를) 선택해 주세요.'); return false;
-        }
-      }
-    }
-    if (!$('oAgree').checked) return showErr($('oAgree'), '개인정보 전달에 동의해 주세요.');
-    $('odErr').hidden = true; return true;
-  }
-
-  /* ---------- 주문서 ---------- */
-  function buildText() {
-    var lines = ['[딜아트 주문서]', ''], total = 0;
-    groupsByBrand().forEach(function (g) {
-      var o = effective(g.brand);
-      var rn = o.same ? o.oName : o.rName, rp = o.same ? o.oPhone : o.rPhone;
-      lines.push('■ ' + g.brand);
-      lines.push('주문자: ' + o.oName.trim() + ' / ' + o.oPhone);
-      lines.push('받는 분: ' + rn.trim() + ' / ' + rp);
-      lines.push('배송지: ' + [o.rAddr.trim(), o.rAddr2.trim()].filter(Boolean).join(' '));
-      shipGroups(g.items).forEach(function (sg) {
-        var key = gk(g.brand, sg.ship), meth = METHODS.filter(function (m) { return m.v === sg.ship; })[0];
-        lines.push('· ' + sg.ship + ' / ' + meth.date + ' ' + pretty(dates[key]));
-        sg.items.forEach(function (it) { lines.push('  - ' + it.name + ' ×' + it.qty + ' (' + won(it.price * it.qty) + ')'); });
-        if ((memos[key] || '').trim()) lines.push('  요청: ' + memos[key].trim());
+      pickers.filter(function (p) { return p.brand === g.brand; }).forEach(function (p) {
+        if (!p.api.getValue()) { p.api.setInvalid(true); addErr(p.host, errMsgs.date); bad.push(p.api.firstMissing()); }
       });
-      var sm = sub(g.items); total += sm; lines.push('  소계 ' + won(sm), '');
     });
-    lines.push('합계 ' + won(total) + ' (배송비 별도 확인)');
-    return lines.join('\n');
+    if (!$('oAgree').checked) {
+      var ag = document.querySelector('.od-agree'), w = el('div', 'od-ferr-wrap'); ag.parentNode.insertBefore(w, ag.nextSibling); addErr(w, errMsgs.agree);
+      $('oAgree').setAttribute('aria-invalid', 'true'); bad.push($('oAgree'));
+    }
+    if (bad.length) {
+      updateBanner();
+      var first = bad.slice().sort(function (x, y) { return x.getBoundingClientRect().top - y.getBoundingClientRect().top; })[0];
+      try { first.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (x) {}
+      first.focus({ preventScroll: true });
+      return false;
+    }
+    return true;
   }
+  // 다시 입력하기 시작하면 그 칸의 오류 표시만 사라진다
+  document.addEventListener('input', function (e) {
+    var f = e.target.closest && e.target.closest('.od-f'); if (!f) return;
+    var p = f.querySelector('.od-ferr'); if (p) { p.remove(); e.target.removeAttribute('aria-invalid'); updateBanner(); }
+  });
+  $('oAgree').addEventListener('change', function () {
+    if (!this.checked) return; this.removeAttribute('aria-invalid');
+    var w = document.querySelector('.od-ferr-wrap'); if (w) w.remove(); updateBanner();
+  });
 
+  /* ---------- 결제 흐름: 결제 중 → 주문 완료 / 결제 실패 ---------- */
   var toastT;
   function toast(m) { var t = $('bdToast'); t.textContent = m; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true; }, 2200); }
-  function view(done) {
-    $('odForm').hidden = done; $('odDone').hidden = !done; $('odFoot').hidden = done || !items.length;
-    $('odTitle').textContent = done ? '주문서' : '주문하기';
-    $('odBack').setAttribute('href', done ? '#' : 'cart.html');
+  var TITLES = { form: '주문하기', loading: '결제 중', done: '주문 완료', fail: '결제 실패' };
+  function view(name) {
+    $('odForm').hidden = name !== 'form'; $('odLoading').hidden = name !== 'loading'; $('odDone').hidden = name !== 'done'; $('odFail').hidden = name !== 'fail';
+    $('odFoot').hidden = name !== 'form' || !items.length;
+    $('odTitle').textContent = TITLES[name];
+    $('odBack').setAttribute('href', name === 'form' ? 'cart.html' : (name === 'done' ? 'index.html' : '#'));
+    $('odBack').style.visibility = name === 'loading' ? 'hidden' : '';
+    document.body.setAttribute('data-od-view', name);
     window.scrollTo(0, 0);
   }
-  $('odBack').addEventListener('click', function (e) { if (!$('odDone').hidden) { e.preventDefault(); view(false); } });
+  $('odBack').addEventListener('click', function (e) { if (!$('odFail').hidden) { e.preventDefault(); view('form'); } });
 
-  $('odForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-    if (!validate()) return;
-    var text = buildText();
-    $('odText').textContent = text;
-    try { localStorage.setItem('dealart.lastOrder', JSON.stringify({ at: new Date().toISOString(), text: text })); } catch (x) {}
-    view(true); $('odDoneT').setAttribute('tabindex', '-1'); $('odDoneT').focus();
-  });
-  $('odEdit').addEventListener('click', function () { view(false); });
-  $('odCopy').addEventListener('click', function () {
-    var text = $('odText').textContent;
-    function fallback() {
-      var r = document.createRange(); r.selectNodeContents($('odText')); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
-      var ok = false; try { ok = document.execCommand('copy'); } catch (x) {}
-      toast(ok ? '주문서를 복사했어요' : '복사하지 못했어요. 선택된 내용을 직접 복사해 주세요');
-    }
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toast('주문서를 복사했어요'); }, fallback); else fallback();
+  var payTimer;
+  function snapshot() {
+    var gs = groupsByBrand(), total = 0, cnt = 0, firstDate = '', methods = {};
+    var rows = gs.map(function (g) { var sm = sub(g.items); total += sm; cnt += g.items.length; return { brand: g.brand, n: g.items.length, sum: sm }; });
+    items.forEach(function (it) { methods[it.ship] = 1; });
+    pickers.forEach(function (p) { var v = dates[p.key]; if (v && (!firstDate || v < firstDate)) firstDate = v; });
+    return { rows: rows, total: total, ship: cnt * SHIP_FEE, firstDate: firstDate, method: Object.keys(methods).join('·') };
+  }
+  var forceFail = /[?&]pay=fail\b/.test(location.search); // 확인용: order.html?pay=fail 이면 결제 실패 화면을 보여 준다
+  function pay() {
+    view('loading');
+    var snap = snapshot();
+    clearTimeout(payTimer);
+    payTimer = setTimeout(function () {
+      if (forceFail) { forceFail = false; showFail(); } else complete(snap);
+    }, 1500);
+  }
+  function readJSON(k) { try { var v = JSON.parse(localStorage.getItem(k) || '[]'); return Array.isArray(v) ? v : []; } catch (x) { return []; } }
+  function complete(snap) {
+    var o = effective(firstBrand()), now = new Date();
+    var ymd = now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate());
+    var orders = readJSON('dealart.orders');
+    var seq = orders.filter(function (r) { return (r.number || '').indexOf('DA-' + ymd) === 0; }).length + 1;
+    var number = 'DA-' + ymd + '-' + ('000' + seq).slice(-4);
+    var rec = { date: iso(now), phone: String(o.oPhone || '').replace(/\D/g, ''), number: number, status: 0, deliveryDate: snap.firstDate, method: snap.method, total: snap.total,
+      items: items.map(function (it) { return { brand: it.brand, name: it.name, qty: it.qty, price: it.price, image: it.image }; }) };
+    try {
+      orders.push(rec); localStorage.setItem('dealart.orders', JSON.stringify(orders));
+      // 자주 산 상품
+      var freq = readJSON('dealart.freq');
+      items.forEach(function (it) {
+        var f = freq.filter(function (x) { return x.name === it.name && x.brand === it.brand; })[0];
+        if (f) { f.count = (f.count || 1) + 1; f.last = rec.date; f.price = it.price; } else freq.push({ brand: it.brand, name: it.name, price: it.price, image: it.image, count: 1, last: rec.date });
+      });
+      localStorage.setItem('dealart.freq', JSON.stringify(freq));
+      // 주문한 상품은 장바구니에서 뺀다
+      var cart = readJSON(KEY).filter(function (c) { return c.sel === false; });
+      localStorage.setItem(KEY, JSON.stringify(cart));
+    } catch (x) {}
+    $('odNo').textContent = number; $('odNoDate').textContent = '주문 날짜 ' + rec.date.replace(/-/g, '.');
+    var box = $('odDoneRows'); box.textContent = '';
+    snap.rows.forEach(function (r) { var row = el('div', 'od-drow'); row.appendChild(el('span', null, r.brand + ' (' + r.n + '개 상품)')); row.appendChild(el('strong', null, won(r.sum))); box.appendChild(row); });
+    var fee = el('div', 'od-drow'); fee.appendChild(el('span', null, '배송비 합계')); fee.appendChild(el('strong', 'soft', won(snap.ship))); box.appendChild(fee);
+    $('odDoneTotal').textContent = won(snap.total);
+    view('done'); $('odDoneT').setAttribute('tabindex', '-1'); $('odDoneT').focus({ preventScroll: true });
+  }
+  function showFail() { view('fail'); $('odFailT').setAttribute('tabindex', '-1'); $('odFailT').focus({ preventScroll: true }); }
+
+  $('odForm').addEventListener('submit', function (e) { e.preventDefault(); if (validate()) pay(); });
+  $('odRetry').addEventListener('click', pay);
+  $('odCopyNo').addEventListener('click', function () {
+    var t = $('odNo').textContent;
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function () { toast('주문번호를 복사했어요'); }, function () { toast('복사하지 못했어요'); }); else toast('복사하지 못했어요');
   });
 
   /* ---------- 시작 ---------- */

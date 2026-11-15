@@ -17,6 +17,8 @@
     var vm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(o.value || '');
     if (vm) { y = +vm[1]; m = +vm[2]; d = +vm[3]; }
 
+    var offAt = function (yy, mm, dd) { return o.off ? o.off(new Date(yy, mm - 1, dd)) : ''; };
+    var todayD = sod(new Date());
     var inRange = function (yy, mm, dd) { var t = new Date(yy, mm - 1, dd); return t >= min && t <= max && t.getMonth() === mm - 1; };
     var monthOk = function (yy, mm) { return new Date(yy, mm, 0) >= min && new Date(yy, mm - 1, 1) <= max; };
     var monthOkAnyYear = function (mm) { for (var k = minY; k <= maxY; k++) if (monthOk(k, mm)) return true; return false; };
@@ -61,7 +63,7 @@
     document.addEventListener('ddp:open', function (e) { if (e.detail !== id) closeAll(); });
 
     /* ----- 값 ----- */
-    function value() { return y && m && d && inRange(y, m, d) ? iso(y, m, d) : ''; }
+    function value() { return y && m && d && inRange(y, m, d) && !offAt(y, m, d) ? iso(y, m, d) : ''; }
     function emit() { if (o.onChange) o.onChange(value()); }
     function mark(ul, attr, v) { Array.prototype.forEach.call(ul.children, function (li) { li.setAttribute('aria-selected', li.getAttribute(attr) === String(v) ? 'true' : 'false'); }); }
     function paint() {
@@ -76,7 +78,7 @@
     // 년·월이 바뀐 뒤: 허용되지 않는 달·일은 비운다
     function revalidate() {
       if (y && m && !monthOk(y, m)) { m = 0; d = 0; }
-      if (y && m && d && !inRange(y, m, d)) d = 0;
+      if (y && m && d && (!inRange(y, m, d) || offAt(y, m, d))) d = 0;
       setInvalid(false); paint(); emit();
     }
     function setInvalid(on) {
@@ -126,8 +128,10 @@
       for (var i = 0; i < first; i++) html += '<span class="cal-pad"></span>';
       for (var dd = 1; dd <= total; dd++) {
         var ok = inRange(vY, vM, dd), on = y === vY && m === vM && d === dd;
-        html += '<button type="button" class="cal-day' + (on ? ' on' : '') + (new Date(vY, vM - 1, dd).getDay() === 0 ? ' sun' : '') + '" data-day="' + dd + '"'
-          + (ok ? '' : ' disabled') + (on ? ' aria-pressed="true"' : '') + ' aria-label="' + vM + '월 ' + dd + '일">' + dd + '</button>';
+        var off = ok ? offAt(vY, vM, dd) : '', isToday = +new Date(vY, vM - 1, dd) === +todayD;
+        var tag = off || (isToday ? '당일 마감' : '');
+        html += '<button type="button" class="cal-day' + (on ? ' on' : '') + (new Date(vY, vM - 1, dd).getDay() === 0 ? ' sun' : '') + (isToday ? ' today' : '') + (tag ? ' has-l' : '') + '" data-day="' + dd + '"'
+          + ((ok && !off) ? '' : ' disabled') + (on ? ' aria-pressed="true"' : '') + ' aria-label="' + vM + '월 ' + dd + '일' + (tag ? ' (' + tag + ', 선택 불가)' : '') + '">' + dd + (tag ? '<small>' + tag + '</small>' : '') + '</button>';
       }
       cal.innerHTML = html + '</div>';
     }

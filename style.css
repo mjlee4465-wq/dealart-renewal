@@ -746,3 +746,74 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .pd-add input{border:2px solid var(--line);border-radius:6px;width:24px;height:24px;background:#fff center/16px no-repeat}
 .pd-add input:checked{border:2px solid var(--ink);background-color:var(--ink);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='m3.5 8.5 3 3 6-7' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
 .pd-add input:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* ---- 주문하기: 입력 오류 · 빈 상태 · 결제 흐름 · 달력 규칙 ---- */
+.od-f input[aria-invalid=true]{border:2px solid #b3261e;outline:0;padding:0 13px}
+.od-ferr{margin:0;font-size:12px;line-height:18px;color:#b3261e}
+.od-date .od-ferr{padding-top:6px}
+.od-ferr-wrap{padding:6px 4px 0}
+.od-err{margin:4px 0 12px;border:1px solid #b3261e;font-size:13px;line-height:20px;font-weight:500}
+.od-agree .ct-box{flex:none}
+.od-agree input[aria-invalid=true]+.ct-box{border-color:#b3261e}
+.od-empty,.od-status{display:flex;flex-direction:column;align-items:center;text-align:center;padding:96px 16px 0}
+.od-status{padding-top:120px}
+.od-ic{display:grid;place-items:center;width:88px;height:88px;margin-bottom:6px;border-radius:50%;background:var(--bg-muted);color:var(--ink)}
+.od-ic.is-ok{width:72px;height:72px;background:var(--ink);color:#fff}
+.od-ic.is-err{width:72px;height:72px;background:#fdecea;border:2px solid #b3261e;color:#b3261e}
+.od-st-t{padding-top:12px;font-weight:600;font-size:20px;line-height:30px;letter-spacing:-.3px;color:var(--ink)}
+.od-st-t:focus{outline:0}
+.od-st-d{padding-top:8px;font-size:14px;line-height:22px;color:var(--ink-72)}
+.od-st-d.small{font-size:12px;color:var(--ink-60)}
+.od-empty .od-acts,.od-status .od-acts,.od-done .od-acts{width:100%;margin-top:6px}
+.od-spin{width:64px;height:64px;border-radius:50%;border:6px solid var(--bg-muted);border-top-color:var(--ink);animation:od-spin 1s linear infinite}
+@keyframes od-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.od-spin{animation-duration:3s}}
+.od-done{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:40px}
+.od-box{width:100%;margin-top:14px;padding:18px 20px;background:#fff;border:1px solid var(--line);border-radius:20px;text-align:left}
+.od-box-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--ink-60)}
+.od-link{padding:4px 6px;border:0;background:none;font:500 12px/18px var(--font-plex);color:var(--ink-72);cursor:pointer}
+.od-no{display:block;padding-top:6px;font-family:var(--font-plex);font-weight:600;font-size:22px;line-height:30px;color:var(--ink)}
+.od-box-sub{display:block;padding-top:4px;font-size:12px;color:var(--ink-60)}
+.od-drow{display:flex;justify-content:space-between;gap:12px;padding:6px 0;font-size:14px;line-height:22px;color:var(--ink-72)}
+.od-drow strong{font-family:var(--font-plex);font-weight:600;color:var(--ink)}
+.od-drow strong.soft{font-weight:500;color:var(--ink-60)}
+.od-drow.total{margin-top:8px;padding-top:14px;border-top:1px solid var(--line-10);font-weight:600;font-size:17px;color:var(--ink)}
+.od-box.is-err{background:#fdecea;border-color:#b3261e;color:#8c1d18}
+.od-box.is-err strong{display:block;font-size:14px;line-height:22px}
+.od-box.is-err span{display:block;padding-top:4px;font-size:12px;line-height:19px}
+.od-done .od-notice{width:100%;text-align:left;font-size:13px;line-height:21px}
+.od-done .od-notice a,.od-status a{color:var(--ink);text-decoration:underline}
+.cal-day.has-l{display:flex;flex-direction:column;align-items:center;justify-content:center;height:44px;line-height:1;gap:2px}
+.cal-day small{font:500 9px/9px var(--font-plex)}
+.cal-day.today:disabled{box-shadow:inset 0 0 0 1.5px var(--ink);color:var(--ink-60)}
+.cal-day.has-l:disabled{color:rgba(27,61,49,.4)}
+.cal-day.sun:disabled{color:rgba(200,65,47,.45)}
+.od-status[hidden],.od-empty[hidden],.od-done[hidden]{display:none}
+
+/* ---- 주문조회: 조회 중 · 주문 상태 5종 ---- */
+.btn.is-loading,.btn:disabled.is-loading{opacity:.7;cursor:progress;position:relative}
+.btn.is-loading::before{content:"";width:16px;height:16px;margin-right:8px;border-radius:50%;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;animation:od-spin .9s linear infinite}
+.oc-status strong.st{display:inline-flex;align-items:center;height:26px;padding:0 12px;border-radius:999px;font-size:13px;font-weight:600;line-height:1}
+.oc-status strong.st0{background:#edebe3;color:#4d6157}
+.oc-status strong.st1{background:#fff1d6;color:#8a5a00}
+.oc-status strong.st2{background:#e3f0fb;color:#1b5e9b}
+.oc-status strong.st3{background:#dcebe2;color:#1b3d31}
+.oc-status strong.st4{background:#fdecea;color:#b3261e}
+.page-orders .od{padding:0 0 4px}
+
+.lv-empty{display:flex;flex-direction:column;align-items:center;text-align:center;margin:8px 16px 0;padding:44px 24px;background:#fff;border:1px solid var(--line);border-radius:20px}
+.lv-empty .od-ic{width:72px;height:72px}
+.lv-empty .btn{display:inline-flex;align-items:center;margin-top:18px;padding:0 24px}
+
+.ct-pane-hint{padding:16px 16px 0;font-size:13px;line-height:20px;color:var(--ink-60)}
+.ct-pane-hint[hidden]{display:none}
+#ctPane1 .ct-list{padding:12px 16px 0}
+#ctPane1 .ct-item{background:#fff;border:1px solid var(--line);border-radius:20px;margin-bottom:12px}
+.ct-empty .od-ic{margin:0 auto 14px}
+.ct-empty .btn.primary{padding:0 28px}
+.ct-add{flex:none;height:36px;padding:0 16px;border:0;border-radius:999px;background:var(--ink);color:#fff;font:600 13px/36px var(--font-plex);cursor:pointer}
+.ct-add:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.ct-heart{flex:none;color:#c8412f;display:grid;place-items:center}
+#ctPane1 .ct-fav{padding:14px}
+.cal-day.has-l{width:44px;border-radius:14px}
+.cal-day small{white-space:nowrap}

@@ -148,13 +148,39 @@
   function renderFav() {
     var on = liked(), list = $('ctFavList'); list.textContent = '';
     $('ctFavCount').textContent = on.length; $('ctFavEmpty').hidden = on.length > 0;
+    $('ctFavHint').hidden = on.length === 0;
     on.forEach(function (f) {
       var li = el('li', 'ct-item'), a = el('a', 'ct-fav'); a.href = f.page;
       var th = el('div', 'ct-thumb'); var img = el('img'); img.src = f.image; img.alt = ''; th.appendChild(img); a.appendChild(th);
       var info = el('div', 'ct-right');
       info.appendChild(el('p', 'ct-ship', f.name));
       info.appendChild(el('p', 'ct-kind', f.kind));
-      a.appendChild(info); li.appendChild(a); list.appendChild(li);
+      a.appendChild(info);
+      var hv = el('span', 'ct-heart'); hv.setAttribute('aria-label', '찜한 브랜드'); hv.innerHTML = '<svg width="22" height="22" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 26 4 15C-1 9 4 1 11 3c2 .6 3.400 2 4 3.500C15.600 5 17 3.600 19 3c7-2 12 6 7 12Z" fill="currentColor"/></svg>'; a.appendChild(hv);
+      li.appendChild(a); list.appendChild(li);
+    });
+  }
+  /* 자주 산 상품: 이 기기에서 주문한 상품 (주문 완료 때 쌓인다) */
+  function renderFreq() {
+    var list = $('ctFreqList'); list.textContent = '';
+    var freq = []; try { freq = JSON.parse(localStorage.getItem('dealart.freq') || '[]'); if (!Array.isArray(freq)) freq = []; } catch (e) { freq = []; }
+    freq.sort(function (a, b) { return String(b.last).localeCompare(String(a.last)); });
+    $('ctFreqEmpty').hidden = freq.length > 0; $('ctFreqHint').hidden = freq.length === 0;
+    freq.forEach(function (f) {
+      var li = el('li', 'ct-item'), row = el('div', 'ct-fav');
+      var th = el('div', 'ct-thumb'); var img = el('img'); img.src = (f.image && /^assets\//.test(f.image)) ? f.image : 'assets/imgImage6.png'; img.alt = ''; th.appendChild(img); row.appendChild(th);
+      var info = el('div', 'ct-right');
+      info.appendChild(el('p', 'ct-kind', f.brand)); info.appendChild(el('p', 'ct-ship', f.name));
+      var d = String(f.last || '').split('-'); info.appendChild(el('p', 'ct-kind', (f.count || 1) + '회 주문' + (d.length === 3 ? ' · 최근 ' + Number(d[1]) + '/' + Number(d[2]) : '')));
+      info.appendChild(el('strong', 'ct-price', won(f.price)));
+      row.appendChild(info);
+      var add = el('button', 'ct-add', '담기'); add.type = 'button'; add.setAttribute('aria-label', f.name + ' 장바구니에 담기');
+      add.addEventListener('click', function () {
+        var same = cart.filter(function (c) { return c.name === f.name && brandOf(c) === f.brand; })[0];
+        if (same) { same.qty = Math.min(99, same.qty + 1); same.sel = true; } else cart.push({ brand: f.brand, name: f.name, qty: 1, price: f.price, image: f.image, ship: '퀵배송' });
+        save(); render(); toast('장바구니에 담았어요');
+      });
+      row.appendChild(add); li.appendChild(row); list.appendChild(li);
     });
   }
   function select(i, focus) {
@@ -164,7 +190,7 @@
       $('ctPane' + k).hidden = !on;
     });
     if (focus) tabs[i].focus();
-    renderFav(); render();
+    renderFreq(); renderFav(); render();
   }
   tabs.forEach(function (b, i) {
     b.addEventListener('click', function () { select(i); });

@@ -49,19 +49,24 @@
     </div>
 
     <div id="ctPane1" role="tabpanel" aria-labelledby="ctTab1" hidden>
-      <section class="ct-empty">
+      <p class="ct-pane-hint" id="ctFreqHint">주문했던 상품을 다시 담을 수 있어요</p>
+      <ul class="ct-list" id="ctFreqList"></ul>
+      <section class="ct-empty" id="ctFreqEmpty" hidden>
+        <div class="od-ic" aria-hidden="true"><svg width="38" height="38" viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="10" stroke="currentColor" stroke-width="2.4"/><path d="M15 9v6.5l4 2.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         <p class="ct-empty-t">자주 산 상품이 아직 없어요</p>
-        <p class="ct-empty-d">주문하신 상품이 쌓이면 여기에 모아 보여드려요.</p>
-        <a class="btn outline" href="brands.html">브랜드 둘러보기</a>
+        <p class="ct-empty-d">주문한 상품이 이곳에 모여요.<br>첫 주문을 해 보세요!</p>
+        <a class="btn primary" href="brands.html">브랜드 둘러보기</a>
       </section>
     </div>
 
     <div id="ctPane2" role="tabpanel" aria-labelledby="ctTab2" hidden>
       <ul class="ct-list" id="ctFavList"></ul>
+      <p class="ct-pane-hint" id="ctFavHint">하트를 눌러 찜한 브랜드예요</p>
       <section class="ct-empty" id="ctFavEmpty" hidden>
+        <div class="od-ic" aria-hidden="true"><svg width="38" height="38" viewBox="0 0 30 30" fill="none"><path d="M15 26 4 15C-1 9 4 1 11 3c2 .6 3.4 2 4 3.5C15.600 5 17 3.600 19 3c7-2 12 6 7 12Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg></div>
         <p class="ct-empty-t">찜한 상품이 없어요</p>
-        <p class="ct-empty-d">브랜드 페이지의 하트를 눌러 찜해 보세요.</p>
-        <a class="btn outline" href="brand-suzuran.html">스즈란테이 보러가기</a>
+        <p class="ct-empty-d">마음에 드는 브랜드의 하트를 눌러 두면<br>이곳에서 모아볼 수 있어요.</p>
+        <a class="btn primary" href="brands.html">브랜드 둘러보기</a>
       </section>
     </div>
   </main>
