@@ -11,7 +11,7 @@
   function load() {
     try {
       var c = JSON.parse(localStorage.getItem(KEY) || '[]');
-      return Array.isArray(c) ? c.filter(function (x) { return x && x.name && x.qty > 0 && x.price >= 0; }) : [];
+      return Array.isArray(c) ? c.filter(function (x) { return x && x.name && x.qty > 0 && x.price >= 0; }).map(function (x) { if (x.ship === '지정일 배송') x.ship = '퀵배송'; return x; }) : [];
     } catch (e) { return []; }
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(cart)); } catch (e) {} }
@@ -46,7 +46,7 @@
     top.appendChild(th);
     var info = el('div', 'ct-info');
     info.appendChild(el('p', 'ct-name', it.name));
-    info.appendChild(el('p', 'ct-opt', '옵션: ' + (it.ship || '지정일 배송')));
+    info.appendChild(el('p', 'ct-opt', '옵션: ' + (it.ship || '퀵배송')));
     info.appendChild(el('p', 'ct-opt', '예약 주문 · 날짜 지정'));
     top.appendChild(info);
     var del = el('button', 'ct-del'); del.type = 'button'; del.setAttribute('aria-label', it.name + ' 삭제'); del.innerHTML = X;
@@ -67,7 +67,7 @@
     line.appendChild(pr);
     li.appendChild(line);
     var sh = el('div', 'ct-shipline');
-    sh.appendChild(el('span', null, '배송방법  ' + (it.ship || '지정일 배송')));
+    sh.appendChild(el('span', null, '배송방법  ' + (it.ship || '퀵배송')));
     sh.appendChild(el('span', null, '배송비 예상  ' + won(SHIP_FEE)));
     li.appendChild(sh);
     return li;

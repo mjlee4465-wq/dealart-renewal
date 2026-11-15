@@ -2,7 +2,6 @@ function dealartOrderBoot() {
   'use strict';
   var KEY = 'dealart.cart';
   var METHODS = [
-    { v: '지정일 배송', date: '도착 희망일' },
     { v: '퀵배송', date: '퀵 배송 희망일' },
     { v: '전국택배', date: '발송 희망일' }
   ];
