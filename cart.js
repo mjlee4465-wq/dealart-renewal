@@ -81,7 +81,7 @@
     var empty = cart.length === 0, total = 0, n = 0, brands = [];
     groups().forEach(function (g) {
       var selN = g.items.filter(isSel).length, s = sub(g.items);
-      total += s; n += selN; if (selN) brands.push({ brand: g.brand, no: g.no, label: g.label, sum: s, n: selN });
+      total += s; n += selN; if (selN) brands.push({ brand: g.brand, no: g.no, label: g.label, sum: s, n: selN, first: (g.items.filter(isSel)[0] || {}).name });
 
       var sec = el('section', 'ct-group'); sec.setAttribute('aria-label', g.label + ' 상품');
       var head = el('div', 'ct-ghead');
@@ -115,7 +115,7 @@
     var list = $('ctSumList'); list.textContent = '';
     if (!brands.length) { var none = el('li', 'ct-sum-row'); none.appendChild(el('span', null, '선택한 상품이 없어요')); list.appendChild(none); }
     brands.forEach(function (b) {
-      var li = el('li', 'ct-sum-row'); var nm = el('span', 'ct-sum-nm'); nm.appendChild(el('span', 'ct-sum-main', b.brand + ' (' + b.n + '개)')); if (b.no) nm.appendChild(el('small', 'ct-sum-no', '주문번호 ' + b.no)); li.appendChild(nm); li.appendChild(el('strong', null, won(b.sum))); list.appendChild(li);
+      var li = el('li', 'ct-sum-row'); var nm = el('span', 'ct-sum-nm'); nm.appendChild(el('span', 'ct-sum-main', b.brand + (b.first ? ' · ' + b.first + (b.n > 1 ? ' 외 ' + (b.n - 1) + '건' : '') : '') + ' (' + b.n + '개)')); if (b.no) nm.appendChild(el('small', 'ct-sum-no', '주문번호 ' + b.no)); li.appendChild(nm); li.appendChild(el('strong', null, won(b.sum))); list.appendChild(li);
     });
     if (n > 0) { var sf = el('li', 'ct-sum-row'); sf.appendChild(el('span', null, '배송비 예상 합계')); sf.appendChild(el('strong', null, won(brands.length * SHIP_FEE))); list.appendChild(sf); }
     $('ctSumTotal').textContent = won(total); $('ctTotal').textContent = won(total);
