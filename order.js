@@ -129,7 +129,7 @@ function dealartOrderBoot() {
     var gs = groupsByBrand(), total = 0, cnt = 0;
     gs.forEach(function (g) {
       var s = sub(g.items); total += s; cnt += g.items.length;
-      var li = el('li', 'ct-sum-row'); li.appendChild(el('span', null, g.label + ' (' + g.items.length + '개 상품)')); li.appendChild(el('strong', null, won(s))); list.appendChild(li);
+      var li = el('li', 'ct-sum-row'); var nm = el('span', 'ct-sum-nm'); nm.appendChild(el('span', 'ct-sum-main', g.brand + ' (' + g.items.length + '개 상품)')); if (g.no) nm.appendChild(el('small', 'ct-sum-no', '주문번호 ' + g.no)); li.appendChild(nm); li.appendChild(el('strong', null, won(s))); list.appendChild(li);
     });
     var sf = el('li', 'ct-sum-row'); sf.appendChild(el('span', null, '배송비 합계')); sf.appendChild(el('strong', null, won(gs.length * SHIP_FEE))); list.appendChild(sf);
     $('odTotal').textContent = won(total); $('odFootTotal').textContent = won(total);

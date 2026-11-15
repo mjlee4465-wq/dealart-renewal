@@ -826,3 +826,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .pd-dialog-d{margin:-12px 0 20px;font-size:13px;line-height:20px;color:var(--ink-60)}
 .od-nos{width:100%}
 .od-nos .od-box{display:block}
+
+.ct-sum-nm{display:flex;flex-direction:column;min-width:0}
+.ct-sum-main{font-weight:600;font-size:16px;line-height:24px;color:var(--ink)}
+.ct-sum-no{font:400 12px/18px var(--font-plex);color:var(--ink-60);overflow-wrap:anywhere}
+.ct-sum-row:has(.ct-sum-nm){align-items:center}
