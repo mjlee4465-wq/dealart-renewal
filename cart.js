@@ -31,7 +31,7 @@
   }
   function sub(items) { return items.reduce(function (s, it) { return isSel(it) ? s + it.price * it.qty : s; }, 0); }
 
-  var SHIP_FEE = 10000; // 예시: 모든 배송방법 통일 (실제 배송비는 브랜드 확인 후 안내)
+  var SHIP_FEE = 10000; // 예시: 브랜드당 1회, 모든 배송방법 통일 (같은 브랜드의 상품을 여러 개 담아도 한 번만 받는다. 실제 배송비는 브랜드 확인 후 안내)
   function renderItem(it) {
     var on = isSel(it);
     var li = el('li', 'ct-item');
@@ -69,7 +69,6 @@
     li.appendChild(line);
     var sh = el('div', 'ct-shipline');
     sh.appendChild(el('span', null, '배송방법  ' + (it.ship || '퀵배송')));
-    sh.appendChild(el('span', null, '배송비 예상  ' + won(SHIP_FEE)));
     li.appendChild(sh);
     return li;
   }
@@ -96,6 +95,7 @@
       var ul = el('ul', 'ct-list');
       g.items.forEach(function (it) { ul.appendChild(renderItem(it)); });
       sec.appendChild(ul);
+      if (selN) { var gs = el('div', 'ct-shipline ct-brandfee'); gs.appendChild(el('span', null, '배송비 예상 (브랜드당 1회)')); gs.appendChild(el('span', null, won(SHIP_FEE))); sec.appendChild(gs); }
       var gf = el('div', 'ct-gfoot');
       gf.appendChild(el('span', null, g.brand + ' 선택 상품 금액'));
       gf.appendChild(el('strong', null, won(s)));
@@ -114,7 +114,7 @@
     brands.forEach(function (b) {
       var li = el('li', 'ct-sum-row'); li.appendChild(el('span', null, b.brand + ' (' + b.n + '개)')); li.appendChild(el('strong', null, won(b.sum))); list.appendChild(li);
     });
-    if (n > 0) { var sf = el('li', 'ct-sum-row'); sf.appendChild(el('span', null, '배송비 예상 합계')); sf.appendChild(el('strong', null, won(n * SHIP_FEE))); list.appendChild(sf); }
+    if (n > 0) { var sf = el('li', 'ct-sum-row'); sf.appendChild(el('span', null, '배송비 예상 합계')); sf.appendChild(el('strong', null, won(brands.length * SHIP_FEE))); list.appendChild(sf); }
     $('ctSumTotal').textContent = won(total); $('ctTotal').textContent = won(total);
     $('ctBrandN').textContent = '브랜드 ' + brands.length + '곳';
     $('ctBuyT').textContent = '총 ' + n + '개 상품 주문하기';
