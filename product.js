@@ -53,18 +53,45 @@
     else say('링크를 복사하지 못했어요');
   });
   // 장바구니: 이 브라우저(localStorage)에만 저장된다
-  $('pdOrder').addEventListener('click', function () {
+  function readCart() { try { var c = JSON.parse(localStorage.getItem('dealart.cart') || '[]'); return Array.isArray(c) ? c : []; } catch (e) { return []; } }
+  function newLot() { return 'L' + Date.now().toString(36) + Math.floor(Math.random() * 1296).toString(36); }
+  function add(lot, no) {
     var ship = document.querySelector('input[name=ship]:checked');
-    var line = { brand: B.name, name: it.name, qty: qty, price: unit(), image: it.image, ship: ship ? ship.value : '', opts: picked.map(function (a) { return a.name; }) };
+    var line = { brand: B.name, name: it.name, qty: qty, price: unit(), image: it.image, ship: ship ? ship.value : '', opts: picked.map(function (a) { return a.name; }), lot: lot, no: no };
     try {
-      var cart = JSON.parse(localStorage.getItem('dealart.cart') || '[]');
-      if (!Array.isArray(cart)) cart = [];
-      // 같은 브랜드를 또 담아도 합치지 않는다: 담을 때마다 새 묶음(lot)으로 들어가고, 묶음마다 배송비·희망일이 따로 적용된다
-      line.lot = 'L' + Date.now().toString(36) + Math.floor(Math.random() * 1296).toString(36);
-      cart.push(line);
+      var cart = readCart();
+      // 같은 묶음(예)으로 담을 때만, 같은 상품·배송 방법이면 수량을 합친다
+      var same = lot && cart.filter(function (c) { return c.brand === B.name && (c.lot || '') === lot && c.name === line.name && c.ship === line.ship && (c.opts || []).join() === line.opts.join(); })[0];
+      if (same) same.qty = Math.min(99, same.qty + line.qty); else cart.push(line);
       localStorage.setItem('dealart.cart', JSON.stringify(cart));
       badge(); openModal();
     } catch (e) { say('장바구니에 담지 못했어요'); }
+  }
+  $('pdOrder').addEventListener('click', function () {
+    var cart = readCart();
+    if (window.DealartLot && DealartLot.ensure(cart)) { try { localStorage.setItem('dealart.cart', JSON.stringify(cart)); } catch (e) {} }
+    var mine = cart.filter(function (c) { return c.brand === B.name; });
+    if (!mine.length) { add(newLot(), window.DealartLot ? DealartLot.nextNo() : ''); return; }
+    // 같은 브랜드가 이미 담겨 있다: 동일한 배송지인지 묻는다
+    var last = mine[mine.length - 1];
+    $('pdSameD').textContent = B.name + ' 상품이 이미 장바구니에 있어요. 같은 배송지로 보내면 한 주문(' + last.no + ')으로 합치고, 다른 곳이면 따로 주문해요.';
+    openSame(function (yes) { if (yes) add(last.lot || '', last.no); else add(newLot(), window.DealartLot ? DealartLot.nextNo() : ''); });
+  });
+  var sameCb = null, sameFocus = null;
+  function openSame(cb) { sameCb = cb; sameFocus = document.activeElement; $('pdSame').hidden = false; document.body.style.overflow = 'hidden'; $('pdSameYes').focus(); }
+  function closeSame(answer) {
+    $('pdSame').hidden = true; document.body.style.overflow = '';
+    var cb = sameCb; sameCb = null;
+    if (answer === null) { if (sameFocus && sameFocus.focus) sameFocus.focus(); return; }   // 바깥을 눌러 닫음: 담지 않는다
+    if (cb) cb(answer);
+  }
+  $('pdSameYes').addEventListener('click', function () { closeSame(true); });
+  $('pdSameNo').addEventListener('click', function () { closeSame(false); });
+  $('pdSame').addEventListener('click', function (e) { if (e.target.hasAttribute('data-close')) closeSame(null); });
+  document.addEventListener('keydown', function (e) {
+    if ($('pdSame').hidden) return;
+    if (e.key === 'Escape') { closeSame(null); return; }
+    if (e.key === 'Tab') { var f = [$('pdSameYes'), $('pdSameNo')], i = f.indexOf(document.activeElement); e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus(); }
   });
   function badge() {
     var n = 0;

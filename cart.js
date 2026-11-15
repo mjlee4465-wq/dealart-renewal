@@ -16,6 +16,7 @@
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(cart)); } catch (e) {} }
   var cart = load(), tab = 0;
+  if (window.DealartLot && DealartLot.ensure(cart)) save();   // 묶음마다 주문번호를 미리 붙여 둔다
   var isSel = function (it) { return it.sel !== false; }; // 담긴 상품은 기본으로 선택됨
   var brandOf = function (it) { return it.brand || '스즈란테이'; };
 
@@ -24,11 +25,11 @@
     var order = [], map = {}, total = {}, seen = {};
     cart.forEach(function (it) {
       var b = brandOf(it), k = b + '|' + (it.lot || '');
-      if (!map[k]) { map[k] = { brand: b, key: k, items: [] }; order.push(map[k]); }
+      if (!map[k]) { map[k] = { brand: b, key: k, no: it.no || '', items: [] }; order.push(map[k]); }
       map[k].items.push(it);
     });
     order.forEach(function (g) { total[g.brand] = (total[g.brand] || 0) + 1; });
-    order.forEach(function (g) { seen[g.brand] = (seen[g.brand] || 0) + 1; g.label = total[g.brand] > 1 ? g.brand + ' · 주문번호 ' + seen[g.brand] : g.brand; });
+    order.forEach(function (g) { seen[g.brand] = (seen[g.brand] || 0) + 1; g.label = g.brand + (g.no ? ' · ' + g.no : ''); });
     return order;
   }
   function sub(items) { return items.reduce(function (s, it) { return isSel(it) ? s + it.price * it.qty : s; }, 0); }
@@ -90,7 +91,7 @@
       cb.addEventListener('change', function () { g.items.forEach(function (it) { it.sel = cb.checked; }); save(); render(); });
       lab.appendChild(cb); lab.appendChild(el('span', 'ct-box'));
       head.appendChild(lab);
-      var name = el('a', 'ct-gname', g.label); name.href = BRAND_PAGE[g.brand] || 'brands.html';
+      var name = el('a', 'ct-gname', g.brand); if (g.no) name.appendChild(el('small', 'ct-gno', '주문번호 ' + g.no)); name.href = BRAND_PAGE[g.brand] || 'brands.html';
       head.appendChild(name);
       head.appendChild(el('span', 'ct-gcount', g.items.length + '개 상품'));
       sec.appendChild(head);
@@ -99,7 +100,7 @@
       sec.appendChild(ul);
       if (selN) { var gs = el('div', 'ct-shipline ct-brandfee'); gs.appendChild(el('span', null, '배송비 예상 (주문번호당 1회)')); gs.appendChild(el('span', null, won(SHIP_FEE))); sec.appendChild(gs); }
       var gf = el('div', 'ct-gfoot');
-      gf.appendChild(el('span', null, g.label + ' 선택 상품 금액'));
+      gf.appendChild(el('span', null, g.brand + ' 선택 상품 금액'));
       gf.appendChild(el('strong', null, won(s)));
       sec.appendChild(gf);
       box.appendChild(sec);

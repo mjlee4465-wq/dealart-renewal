@@ -15,8 +15,9 @@ function dealartOrderBoot() {
   var items = [];
   try {
     var raw = JSON.parse(localStorage.getItem(KEY) || '[]');
+    if (Array.isArray(raw) && window.DealartLot && DealartLot.ensure(raw)) localStorage.setItem(KEY, JSON.stringify(raw));
     items = (Array.isArray(raw) ? raw : []).filter(function (x) { return x && x.name && x.qty > 0 && x.price >= 0 && x.sel !== false; })
-      .map(function (x) { return { brand: x.brand || '스즈란테이', name: x.name, qty: Number(x.qty), price: Number(x.price), image: x.image, lot: x.lot || '', ship: METHODS.some(function (m) { return m.v === x.ship; }) ? x.ship : METHODS[0].v }; });
+      .map(function (x) { return { brand: x.brand || '스즈란테이', name: x.name, qty: Number(x.qty), price: Number(x.price), image: x.image, lot: x.lot || '', no: x.no || '', ship: METHODS.some(function (m) { return m.v === x.ship; }) ? x.ship : METHODS[0].v }; });
   } catch (e) { items = []; }
 
   var info = {}; // 브랜드별 주문자·받는 분
@@ -44,11 +45,11 @@ function dealartOrderBoot() {
     var order = [], map = {}, total = {}, seen = {};
     items.forEach(function (it) {
       var k = it.brand + '|' + (it.lot || '');
-      if (!map[k]) { map[k] = { brand: it.brand, key: k, items: [] }; order.push(map[k]); }
+      if (!map[k]) { map[k] = { brand: it.brand, key: k, no: it.no || '', items: [] }; order.push(map[k]); }
       map[k].items.push(it);
     });
     order.forEach(function (g) { total[g.brand] = (total[g.brand] || 0) + 1; });
-    order.forEach(function (g) { seen[g.brand] = (seen[g.brand] || 0) + 1; g.n = seen[g.brand]; g.first = g.n === 1; g.label = total[g.brand] > 1 ? g.brand + ' · 주문번호 ' + g.n : g.brand; });
+    order.forEach(function (g) { seen[g.brand] = (seen[g.brand] || 0) + 1; g.n = seen[g.brand]; g.first = g.n === 1; g.label = g.brand + (g.no ? ' · ' + g.no : ''); });
     return order;
   }
   var SHIP_FEE = 10000; // 예시: 브랜드당 1회 (같은 브랜드의 상품이 여러 개여도, 배송 방법이 달라도 한 번만. 장바구니와 동일)
@@ -63,7 +64,7 @@ function dealartOrderBoot() {
     groupsByBrand().forEach(function (g, bi) {
       var card = el('section', 'od-card od-brand'); card.setAttribute('aria-label', g.label + ' 주문');
       var head = el('div', 'od-bhead');
-      var nm = el('a', 'od-bname', g.label); nm.href = BRAND_PAGE[g.brand] || 'brands.html'; head.appendChild(nm);
+      var nm = el('a', 'od-bname', g.brand); if (g.no) nm.appendChild(el('small', 'od-bno', '주문번호 ' + g.no)); nm.href = BRAND_PAGE[g.brand] || 'brands.html'; head.appendChild(nm);
       head.appendChild(el('strong', 'od-bsum', won(sub(g.items))));
       card.appendChild(head);
 
@@ -271,7 +272,7 @@ function dealartOrderBoot() {
   var payTimer;
   function snapshot() {
     var gs = groupsByBrand(), total = 0, cnt = 0, firstDate = '', methods = {};
-    var rows = gs.map(function (g) { var sm = sub(g.items); total += sm; cnt += g.items.length; return { brand: g.label, n: g.items.length, sum: sm }; });
+    var rows = gs.map(function (g) { var sm = sub(g.items); total += sm; cnt += g.items.length; return { brand: g.brand, n: g.items.length, sum: sm }; });
     items.forEach(function (it) { methods[it.ship] = 1; });
     pickers.forEach(function (p) { var v = dates[p.key]; if (v && (!firstDate || v < firstDate)) firstDate = v; });
     return { rows: rows, total: total, ship: rows.length * SHIP_FEE, firstDate: firstDate, method: Object.keys(methods).join('·') };
@@ -287,27 +288,32 @@ function dealartOrderBoot() {
   }
   function readJSON(k) { try { var v = JSON.parse(localStorage.getItem(k) || '[]'); return Array.isArray(v) ? v : []; } catch (x) { return []; } }
   function complete(snap) {
-    var o = effective(firstBrand()), now = new Date();
-    var ymd = now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate());
-    var orders = readJSON('dealart.orders');
-    var seq = orders.filter(function (r) { return (r.number || '').indexOf('DA-' + ymd) === 0; }).length + 1;
-    var number = 'DA-' + ymd + '-' + ('000' + seq).slice(-4);
-    var rec = { date: iso(now), phone: String(o.oPhone || '').replace(/\D/g, ''), number: number, status: 0, deliveryDate: snap.firstDate, method: snap.method, total: snap.total,
-      items: items.map(function (it) { return { brand: it.brand, name: it.name, qty: it.qty, price: it.price, image: it.image }; }) };
+    var o = effective(firstBrand()), now = new Date(), today = iso(now);
+    var orders = readJSON('dealart.orders'), gs = groupsByBrand(), numbers = [];
+    var phone = String(o.oPhone || '').replace(/\D/g, '');
+    gs.forEach(function (g) {
+      var firstD = '', ms = {};
+      g.items.forEach(function (it) { ms[it.ship] = 1; });
+      pickers.filter(function (p) { return p.gkey === g.key; }).forEach(function (p) { var v = dates[p.key]; if (v && (!firstD || v < firstD)) firstD = v; });
+      var number = g.no || (window.DealartLot ? DealartLot.nextNo() : '');
+      numbers.push(number);
+      orders.push({ date: today, phone: phone, number: number, status: 0, deliveryDate: firstD, method: Object.keys(ms).join('·'), total: sub(g.items),
+        items: g.items.map(function (it) { return { brand: it.brand, name: it.name, qty: it.qty, price: it.price, image: it.image }; }) });
+    });
     try {
-      orders.push(rec); localStorage.setItem('dealart.orders', JSON.stringify(orders));
+      localStorage.setItem('dealart.orders', JSON.stringify(orders));
       // 자주 산 상품
       var freq = readJSON('dealart.freq');
       items.forEach(function (it) {
         var f = freq.filter(function (x) { return x.name === it.name && x.brand === it.brand; })[0];
-        if (f) { f.count = (f.count || 1) + 1; f.last = rec.date; f.price = it.price; } else freq.push({ brand: it.brand, name: it.name, price: it.price, image: it.image, count: 1, last: rec.date });
+        if (f) { f.count = (f.count || 1) + 1; f.last = today; f.price = it.price; } else freq.push({ brand: it.brand, name: it.name, price: it.price, image: it.image, count: 1, last: today });
       });
       localStorage.setItem('dealart.freq', JSON.stringify(freq));
       // 주문한 상품은 장바구니에서 뺀다
       var cart = readJSON(KEY).filter(function (c) { return c.sel === false; });
       localStorage.setItem(KEY, JSON.stringify(cart));
     } catch (x) {}
-    $('odNo').textContent = number; $('odNoDate').textContent = '주문 날짜 ' + rec.date.replace(/-/g, '.');
+    $('odNo').textContent = numbers.join('\n'); $('odNoDate').textContent = '주문 날짜 ' + today.replace(/-/g, '.');
     var box = $('odDoneRows'); box.textContent = '';
     snap.rows.forEach(function (r) { var row = el('div', 'od-drow'); row.appendChild(el('span', null, r.brand + ' (' + r.n + '개 상품)')); row.appendChild(el('strong', null, won(r.sum))); box.appendChild(row); });
     var fee = el('div', 'od-drow'); fee.appendChild(el('span', null, '배송비 합계')); fee.appendChild(el('strong', 'soft', won(snap.ship))); box.appendChild(fee);
@@ -320,7 +326,7 @@ function dealartOrderBoot() {
   $('odRetry').addEventListener('click', pay);
   $('odCopyNo').addEventListener('click', function () {
     var t = $('odNo').textContent;
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function () { toast('주문번호를 복사했어요'); }, function () { toast('복사하지 못했어요'); }); else toast('복사하지 못했어요');
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t.replace(/\n/g, ', ')).then(function () { toast('주문번호를 복사했어요'); }, function () { toast('복사하지 못했어요'); }); else toast('복사하지 못했어요');
   });
 
   /* ---------- 시작 ---------- */

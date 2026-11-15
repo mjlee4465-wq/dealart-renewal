@@ -68,7 +68,19 @@
     </div>
   </div>
 </div>
+<div class="pd-modal" id="pdSame" hidden>
+  <div class="pd-modal-bg" data-close></div>
+  <div class="pd-dialog" role="alertdialog" aria-modal="true" aria-labelledby="pdSameT" aria-describedby="pdSameD" tabindex="-1">
+    <p class="pd-dialog-t" id="pdSameT">동일한 배송지인가요?</p>
+    <p class="pd-dialog-d" id="pdSameD"></p>
+    <div class="pd-dialog-acts">
+      <button class="btn primary" type="button" id="pdSameYes">예</button>
+      <button class="btn outline" type="button" id="pdSameNo">아니오</button>
+    </div>
+  </div>
+</div>
 <div class="bd-toast" id="bdToast" role="status" aria-live="polite" hidden></div>
+<script src="dealart-lot.js"></script>
 <script src="product.js"></script>
 </body>
 </html>

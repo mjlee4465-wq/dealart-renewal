@@ -818,3 +818,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .cal-day.has-l{width:44px;border-radius:14px}
 .cal-day small{white-space:nowrap}
 .ct-brandfee{margin:0;padding:12px 16px;border-top:1px solid var(--line-10);background:transparent}
+
+.ct-gname{display:flex;flex-direction:column;min-width:0}
+.ct-gno,.od-bno{display:block;font:400 11px/16px var(--font-plex);color:var(--ink-60);letter-spacing:0;overflow-wrap:anywhere}
+.od-bname{display:flex;flex-direction:column;min-width:0}
+.od-no{white-space:pre-line}
+.pd-dialog-d{margin:-12px 0 20px;font-size:13px;line-height:20px;color:var(--ink-60)}
