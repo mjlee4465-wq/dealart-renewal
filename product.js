@@ -74,7 +74,6 @@
     if (!mine.length) { add(newLot(), window.DealartLot ? DealartLot.nextNo() : ''); return; }
     // 같은 브랜드가 이미 담겨 있다: 동일한 배송지인지 묻는다
     var last = mine[mine.length - 1];
-    $('pdSameD').textContent = B.name + ' 상품이 이미 장바구니에 있어요. 같은 배송지로 보내면 한 주문(' + last.no + ')으로 합치고, 다른 곳이면 따로 주문해요.';
     openSame(function (yes) { if (yes) add(last.lot || '', last.no); else add(newLot(), window.DealartLot ? DealartLot.nextNo() : ''); });
   });
   var sameCb = null, sameFocus = null;
