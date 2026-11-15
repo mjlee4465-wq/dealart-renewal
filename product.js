@@ -2,7 +2,7 @@
   'use strict';
   var PRICE = 12900; // 예시 가격 (실제 가격은 주문 페이지 기준)
   var BRANDS = {
-    suzuran: { name: '스즈란테이', page: 'brand-suzuran.html', image: 'assets/imgImage6.png', items: ['치킨+안심까스', '생선까스'], descs: ['엄선된 육질과 일본 정통 조리법이 만난 최상의 밸런스', '팡코(일본식 빵가루)로 입힌 황금빛 튀김옷, 그 안에 저온숙성된 생선의 부드럽고 촉촉한 육질'], images: ['assets/suzuran-chicken-hire.jpg', 'assets/suzuran-fish-katsu.jpg'], prices: [19000, 22000] },
+    suzuran: { name: '스즈란테이', page: 'brand-suzuran.html', image: 'assets/imgImage6.png', items: ['치킨+안심까스', '생선까스', '히레까스(안심)'], descs: ['엄선된 육질과 일본 정통 조리법이 만난 최상의 밸런스', '팡코(일본식 빵가루)로 입힌 황금빛 튀김옷, 그 안에 저온숙성된 생선의 부드럽고 촉촉한 육질', '엄선된 육질로 빠르게 튀겨낸 튀김옷은 시각적 즐거움과 고소함 풍미를 극대화'], images: ['assets/suzuran-chicken-hire.jpg', 'assets/suzuran-fish-katsu.jpg', 'assets/suzuran-hire-katsu.jpg'], prices: [19000, 22000, 21000] },
     obok: { name: '오복수산', page: 'brand-obok.html', image: 'assets/imgImage7.png', items: ['카이센동'] },
     anju: { name: '안주마을', page: 'brand-anju.html', image: 'assets/imgImage8.png', items: ['대표 안주'] }
   };
