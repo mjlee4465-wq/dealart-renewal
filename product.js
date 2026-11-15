@@ -9,6 +9,14 @@
   var qs = location.search, bm = /[?&]b=([a-z]+)/.exec(qs), B = BRANDS[bm ? bm[1] : 'suzuran'] || BRANDS.suzuran;
   var ITEMS = {};
   for (var n = 1; n <= 6; n++) ITEMS[n] = { name: B.items[n - 1] || '상품명 (예시) ' + n, chip: n === 1 ? '대표' : '메뉴', desc: (B.descs || [])[n - 1], price: (B.prices || [])[n - 1] || PRICE, image: (B.images || [])[n - 1] || B.image };
+  var ADDONS = { 'suzuran:6': [
+    { name: '안심(히레)', price: 4000, image: 'assets/suzuran-add-hire.jpg' },
+    { name: '생선', price: 5000, image: 'assets/suzuran-add-fish.jpg' },
+    { name: '새우(노바시)', price: 5000, image: 'assets/suzuran-add-shrimp.jpg' },
+    { name: '치킨', price: 3000, image: 'assets/suzuran-add-hire.jpg' },
+    { name: '가지요리(아게나스)', price: 2000 },
+    { name: '두부튀김(아게다시도후)', price: 3000 }
+  ] };
   var $ = function (id) { return document.getElementById(id); };
   var m = /[?&]p=(\d)/.exec(location.search), it = ITEMS[m ? m[1] : 1] || ITEMS[1];
   document.title = it.name + ' | ' + B.name + ' | DEALART 딜아트';
@@ -16,9 +24,24 @@
   $('pdName').textContent = it.name; $('pdChip').textContent = it.chip; if (it.desc) $('pdDesc').textContent = it.desc; $('pdImg').alt = it.name;
   var won = function (n) { return n.toLocaleString('ko-KR') + '원'; };
   var qty = 1;
+  var addons = ADDONS[(bm ? bm[1] : 'suzuran') + ':' + (m ? m[1] : 1)] || [], picked = [];
+  function unit() { return it.price + picked.reduce(function (s, a) { return s + a.price; }, 0); }
+  if (addons.length) {
+    var box = $('pdAddons'); box.hidden = false;
+    addons.forEach(function (a) {
+      var lab = document.createElement('label'); lab.className = 'pd-opt pd-add';
+      var cb = document.createElement('input'); cb.type = 'checkbox'; cb.value = a.name;
+      var th = document.createElement('span'); th.className = 'pd-add-th';
+      if (a.image) { var im = document.createElement('img'); im.src = a.image; im.alt = ''; th.appendChild(im); }
+      var t = document.createElement('span'); t.className = 'pd-opt-t'; t.textContent = a.name;
+      var pr = document.createElement('span'); pr.className = 'pd-opt-p'; pr.textContent = '+' + won(a.price);
+      cb.addEventListener('change', function () { picked = addons.filter(function (x, i) { return box.querySelectorAll('input')[i].checked; }); render(); });
+      lab.appendChild(cb); lab.appendChild(th); lab.appendChild(t); lab.appendChild(pr); box.appendChild(lab);
+    });
+  }
   function render() {
     $('pdQty').textContent = qty; $('pdMinus').disabled = qty <= 1; $('pdPlus').disabled = qty >= 99;
-    $('pdUnit').textContent = won(it.price);
+    $('pdUnit').textContent = won(unit());
   }
   $('pdMinus').addEventListener('click', function () { if (qty > 1) { qty--; render(); } });
   $('pdPlus').addEventListener('click', function () { if (qty < 99) { qty++; render(); } });
@@ -32,11 +55,11 @@
   // 장바구니: 이 브라우저(localStorage)에만 저장된다
   $('pdOrder').addEventListener('click', function () {
     var ship = document.querySelector('input[name=ship]:checked');
-    var line = { brand: B.name, name: it.name, qty: qty, price: it.price, image: it.image, ship: ship ? ship.value : '' };
+    var line = { brand: B.name, name: it.name, qty: qty, price: unit(), image: it.image, ship: ship ? ship.value : '', opts: picked.map(function (a) { return a.name; }) };
     try {
       var cart = JSON.parse(localStorage.getItem('dealart.cart') || '[]');
       if (!Array.isArray(cart)) cart = [];
-      var same = cart.filter(function (c) { return c.name === line.name && c.ship === line.ship; })[0];
+      var same = cart.filter(function (c) { return c.name === line.name && c.ship === line.ship && (c.opts || []).join() === line.opts.join(); })[0];
       if (same) same.qty = Math.min(99, same.qty + line.qty); else cart.push(line);
       localStorage.setItem('dealart.cart', JSON.stringify(cart));
       badge(); openModal();

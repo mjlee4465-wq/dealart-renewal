@@ -48,6 +48,7 @@
     info.appendChild(el('p', 'ct-name', it.name));
     info.appendChild(el('p', 'ct-opt', '옵션: ' + (it.ship || '퀵배송')));
     info.appendChild(el('p', 'ct-opt', '예약 주문 · 날짜 지정'));
+    if (it.opts && it.opts.length) info.appendChild(el('p', 'ct-opt', '추가: ' + it.opts.join(', ')));
     top.appendChild(info);
     var del = el('button', 'ct-del'); del.type = 'button'; del.setAttribute('aria-label', it.name + ' 삭제'); del.innerHTML = X;
     del.addEventListener('click', function () { cart.splice(cart.indexOf(it), 1); save(); render(); });
