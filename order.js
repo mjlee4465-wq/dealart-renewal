@@ -313,7 +313,21 @@ function dealartOrderBoot() {
       var cart = readJSON(KEY).filter(function (c) { return c.sel === false; });
       localStorage.setItem(KEY, JSON.stringify(cart));
     } catch (x) {}
-    $('odNo').textContent = numbers.join('\n'); $('odNoDate').textContent = '주문 날짜 ' + today.replace(/-/g, '.');
+    // 주문번호마다 카드를 따로 보여 준다
+    var nbox = $('odNos'); nbox.textContent = '';
+    gs.forEach(function (g, i) {
+      var card = el('div', 'od-box od-nocard');
+      var top = el('div', 'od-box-top'); top.appendChild(el('span', null, '주문번호' + (gs.length > 1 ? ' ' + (i + 1) : '')));
+      var cp = el('button', 'od-link', '복사'); cp.type = 'button'; cp.setAttribute('aria-label', numbers[i] + ' 복사');
+      cp.addEventListener('click', function () {
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(numbers[i]).then(function () { toast('주문번호를 복사했어요'); }, function () { toast('복사하지 못했어요'); }); else toast('복사하지 못했어요');
+      });
+      top.appendChild(cp); card.appendChild(top);
+      card.appendChild(el('strong', 'od-no', numbers[i]));
+      card.appendChild(el('span', 'od-box-sub', g.brand + ' · ' + g.items.length + '개 상품 · ' + won(sub(g.items))));
+      card.appendChild(el('span', 'od-box-sub', '주문 날짜 ' + today.replace(/-/g, '.')));
+      nbox.appendChild(card);
+    });
     var box = $('odDoneRows'); box.textContent = '';
     snap.rows.forEach(function (r) { var row = el('div', 'od-drow'); row.appendChild(el('span', null, r.brand + ' (' + r.n + '개 상품)')); row.appendChild(el('strong', null, won(r.sum))); box.appendChild(row); });
     var fee = el('div', 'od-drow'); fee.appendChild(el('span', null, '배송비 합계')); fee.appendChild(el('strong', 'soft', won(snap.ship))); box.appendChild(fee);
@@ -324,10 +338,6 @@ function dealartOrderBoot() {
 
   $('odForm').addEventListener('submit', function (e) { e.preventDefault(); if (validate()) pay(); });
   $('odRetry').addEventListener('click', pay);
-  $('odCopyNo').addEventListener('click', function () {
-    var t = $('odNo').textContent;
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t.replace(/\n/g, ', ')).then(function () { toast('주문번호를 복사했어요'); }, function () { toast('복사하지 못했어요'); }); else toast('복사하지 못했어요');
-  });
 
   /* ---------- 시작 ---------- */
   if (!items.length) { $('odEmpty').hidden = false; $('odBody').hidden = true; $('odFoot').hidden = true; }
