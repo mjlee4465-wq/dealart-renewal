@@ -108,7 +108,7 @@
 
     $('ctAll').checked = cart.length > 0 && cart.every(isSel);
     $('ctCount').textContent = cart.length;
-    $('ctBar').hidden = empty; $('ctEmpty').hidden = !empty; $('ctNote').hidden = empty;
+    $('ctBar').hidden = empty; $('ctEmpty').hidden = !empty;
     $('ctFoot').hidden = empty || tab !== 0;
     $('ctSumCard').hidden = empty;
 
