@@ -2,13 +2,13 @@
   'use strict';
   var PRICE = 12900; // 예시 가격 (실제 가격은 주문 페이지 기준)
   var BRANDS = {
-    suzuran: { name: '스즈란테이', page: 'brand-suzuran.html', image: 'assets/imgImage6.png', items: ['치킨+안심까스'], descs: ['엄선된 육질과 일본 정통 조리법이 만난 최상의 밸런스'], images: ['assets/suzuran-chicken-hire.jpg'] },
+    suzuran: { name: '스즈란테이', page: 'brand-suzuran.html', image: 'assets/imgImage6.png', items: ['치킨+안심까스'], descs: ['엄선된 육질과 일본 정통 조리법이 만난 최상의 밸런스'], images: ['assets/suzuran-chicken-hire.jpg'], prices: [19000] },
     obok: { name: '오복수산', page: 'brand-obok.html', image: 'assets/imgImage7.png', items: ['카이센동'] },
     anju: { name: '안주마을', page: 'brand-anju.html', image: 'assets/imgImage8.png', items: ['대표 안주'] }
   };
   var qs = location.search, bm = /[?&]b=([a-z]+)/.exec(qs), B = BRANDS[bm ? bm[1] : 'suzuran'] || BRANDS.suzuran;
   var ITEMS = {};
-  for (var n = 1; n <= 5; n++) ITEMS[n] = { name: B.items[n - 1] || '상품명 (예시) ' + n, chip: n === 1 ? '대표' : '메뉴', desc: (B.descs || [])[n - 1], image: (B.images || [])[n - 1] || B.image };
+  for (var n = 1; n <= 5; n++) ITEMS[n] = { name: B.items[n - 1] || '상품명 (예시) ' + n, chip: n === 1 ? '대표' : '메뉴', desc: (B.descs || [])[n - 1], price: (B.prices || [])[n - 1] || PRICE, image: (B.images || [])[n - 1] || B.image };
   var $ = function (id) { return document.getElementById(id); };
   var m = /[?&]p=(\d)/.exec(location.search), it = ITEMS[m ? m[1] : 1] || ITEMS[1];
   document.title = it.name + ' | ' + B.name + ' | DEALART 딜아트';
@@ -18,7 +18,7 @@
   var qty = 1;
   function render() {
     $('pdQty').textContent = qty; $('pdMinus').disabled = qty <= 1; $('pdPlus').disabled = qty >= 99;
-    $('pdUnit').textContent = won(PRICE);
+    $('pdUnit').textContent = won(it.price);
   }
   $('pdMinus').addEventListener('click', function () { if (qty > 1) { qty--; render(); } });
   $('pdPlus').addEventListener('click', function () { if (qty < 99) { qty++; render(); } });
@@ -32,7 +32,7 @@
   // 장바구니: 이 브라우저(localStorage)에만 저장된다
   $('pdOrder').addEventListener('click', function () {
     var ship = document.querySelector('input[name=ship]:checked');
-    var line = { brand: B.name, name: it.name, qty: qty, price: PRICE, image: it.image, ship: ship ? ship.value : '' };
+    var line = { brand: B.name, name: it.name, qty: qty, price: it.price, image: it.image, ship: ship ? ship.value : '' };
     try {
       var cart = JSON.parse(localStorage.getItem('dealart.cart') || '[]');
       if (!Array.isArray(cart)) cart = [];
