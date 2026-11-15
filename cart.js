@@ -28,7 +28,7 @@
       map[k].items.push(it);
     });
     order.forEach(function (g) { total[g.brand] = (total[g.brand] || 0) + 1; });
-    order.forEach(function (g) { seen[g.brand] = (seen[g.brand] || 0) + 1; g.label = total[g.brand] > 1 ? g.brand + ' · 묶음 ' + seen[g.brand] : g.brand; });
+    order.forEach(function (g) { seen[g.brand] = (seen[g.brand] || 0) + 1; g.label = total[g.brand] > 1 ? g.brand + ' · 주문번호 ' + seen[g.brand] : g.brand; });
     return order;
   }
   function sub(items) { return items.reduce(function (s, it) { return isSel(it) ? s + it.price * it.qty : s; }, 0); }
@@ -97,7 +97,7 @@
       var ul = el('ul', 'ct-list');
       g.items.forEach(function (it) { ul.appendChild(renderItem(it)); });
       sec.appendChild(ul);
-      if (selN) { var gs = el('div', 'ct-shipline ct-brandfee'); gs.appendChild(el('span', null, '배송비 예상 (묶음당 1회)')); gs.appendChild(el('span', null, won(SHIP_FEE))); sec.appendChild(gs); }
+      if (selN) { var gs = el('div', 'ct-shipline ct-brandfee'); gs.appendChild(el('span', null, '배송비 예상 (주문번호당 1회)')); gs.appendChild(el('span', null, won(SHIP_FEE))); sec.appendChild(gs); }
       var gf = el('div', 'ct-gfoot');
       gf.appendChild(el('span', null, g.label + ' 선택 상품 금액'));
       gf.appendChild(el('strong', null, won(s)));

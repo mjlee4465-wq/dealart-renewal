@@ -48,7 +48,7 @@ function dealartOrderBoot() {
       map[k].items.push(it);
     });
     order.forEach(function (g) { total[g.brand] = (total[g.brand] || 0) + 1; });
-    order.forEach(function (g) { seen[g.brand] = (seen[g.brand] || 0) + 1; g.n = seen[g.brand]; g.first = g.n === 1; g.label = total[g.brand] > 1 ? g.brand + ' · 묶음 ' + g.n : g.brand; });
+    order.forEach(function (g) { seen[g.brand] = (seen[g.brand] || 0) + 1; g.n = seen[g.brand]; g.first = g.n === 1; g.label = total[g.brand] > 1 ? g.brand + ' · 주문번호 ' + g.n : g.brand; });
     return order;
   }
   var SHIP_FEE = 10000; // 예시: 브랜드당 1회 (같은 브랜드의 상품이 여러 개여도, 배송 방법이 달라도 한 번만. 장바구니와 동일)
@@ -89,7 +89,7 @@ function dealartOrderBoot() {
           ul.appendChild(li);
         });
         blk.appendChild(ul);
-        if (si === 0) { var fee = el('div', 'od-fee'); fee.appendChild(el('span', null, '배송비 (묶음당 1회)')); fee.appendChild(el('strong', null, won(SHIP_FEE))); blk.appendChild(fee); }
+        if (si === 0) { var fee = el('div', 'od-fee'); fee.appendChild(el('span', null, '배송비 (주문번호당 1회)')); fee.appendChild(el('strong', null, won(SHIP_FEE))); blk.appendChild(fee); }
         // 희망일 — 주문조회 페이지와 같은 년·월 목록 + 일 달력
         var meth = METHODS.filter(function (m) { return m.v === sg.ship; })[0];
         var host = el('div', 'od-date'); blk.appendChild(host);
