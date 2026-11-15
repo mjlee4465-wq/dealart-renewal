@@ -2,13 +2,13 @@
   'use strict';
   var PRICE = 12900; // 예시 가격 (실제 가격은 주문 페이지 기준)
   var BRANDS = {
-    suzuran: { name: '스즈란테이', page: 'brand-suzuran.html', image: 'assets/imgImage6.png', items: ['치킨+안심까스', '생선까스', '히레까스(안심)', '새우(노바시)+생선까스', '점보새우까스'], descs: ['엄선된 육질과 일본 정통 조리법이 만난 최상의 밸런스', '팡코(일본식 빵가루)로 입힌 황금빛 튀김옷, 그 안에 저온숙성된 생선의 부드럽고 촉촉한 육질', '엄선된 육질로 빠르게 튀겨낸 튀김옷은 시각적 즐거움과 고소함 풍미를 극대화', '바다의 풍미를 품은 격조 높은 미식의 경험, 새우와 생선 속살의 탱글한 탄력과 단맛', '바다의 풍미를 품은 압도적인 스케일, 새우 속살의 탱글한 탄력과 바다의 신선함'], images: ['assets/suzuran-chicken-hire.jpg', 'assets/suzuran-fish-katsu.jpg', 'assets/suzuran-hire-katsu.jpg', 'assets/suzuran-shrimp-fish.jpg', 'assets/suzuran-jumbo-shrimp.jpg'], prices: [19000, 22000, 21000, 25000, 28000] },
+    suzuran: { name: '스즈란테이', page: 'brand-suzuran.html', image: 'assets/imgImage6.png', items: ['치킨+안심까스', '생선까스', '히레까스(안심)', '새우(노바시)+생선까스', '점보새우까스', '기본(점보새우,전복)+선택'], descs: ['엄선된 육질과 일본 정통 조리법이 만난 최상의 밸런스', '팡코(일본식 빵가루)로 입힌 황금빛 튀김옷, 그 안에 저온숙성된 생선의 부드럽고 촉촉한 육질', '엄선된 육질로 빠르게 튀겨낸 튀김옷은 시각적 즐거움과 고소함 풍미를 극대화', '바다의 풍미를 품은 격조 높은 미식의 경험, 새우와 생선 속살의 탱글한 탄력과 단맛', '바다의 풍미를 품은 압도적인 스케일, 새우 속살의 탱글한 탄력과 바다의 신선함', '안심/생선/새우/치킨중 기회에 맞춰 더해지는 오더 메이드 방식의 특별함, 나만을 위한 미식 오마카세'], images: ['assets/suzuran-chicken-hire.jpg', 'assets/suzuran-fish-katsu.jpg', 'assets/suzuran-hire-katsu.jpg', 'assets/suzuran-shrimp-fish.jpg', 'assets/suzuran-jumbo-shrimp.jpg', 'assets/suzuran-select-abalone.jpg'], prices: [19000, 22000, 21000, 25000, 28000, 30000] },
     obok: { name: '오복수산', page: 'brand-obok.html', image: 'assets/imgImage7.png', items: ['카이센동'] },
     anju: { name: '안주마을', page: 'brand-anju.html', image: 'assets/imgImage8.png', items: ['대표 안주'] }
   };
   var qs = location.search, bm = /[?&]b=([a-z]+)/.exec(qs), B = BRANDS[bm ? bm[1] : 'suzuran'] || BRANDS.suzuran;
   var ITEMS = {};
-  for (var n = 1; n <= 5; n++) ITEMS[n] = { name: B.items[n - 1] || '상품명 (예시) ' + n, chip: n === 1 ? '대표' : '메뉴', desc: (B.descs || [])[n - 1], price: (B.prices || [])[n - 1] || PRICE, image: (B.images || [])[n - 1] || B.image };
+  for (var n = 1; n <= 6; n++) ITEMS[n] = { name: B.items[n - 1] || '상품명 (예시) ' + n, chip: n === 1 ? '대표' : '메뉴', desc: (B.descs || [])[n - 1], price: (B.prices || [])[n - 1] || PRICE, image: (B.images || [])[n - 1] || B.image };
   var $ = function (id) { return document.getElementById(id); };
   var m = /[?&]p=(\d)/.exec(location.search), it = ITEMS[m ? m[1] : 1] || ITEMS[1];
   document.title = it.name + ' | ' + B.name + ' | DEALART 딜아트';
