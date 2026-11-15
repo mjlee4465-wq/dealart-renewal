@@ -31,12 +31,12 @@
     addons.forEach(function (a) {
       var lab = document.createElement('label'); lab.className = 'pd-opt pd-add';
       var cb = document.createElement('input'); cb.type = 'checkbox'; cb.value = a.name;
-      var th = document.createElement('span'); th.className = 'pd-add-th';
-      if (a.image) { var im = document.createElement('img'); im.src = a.image; im.alt = ''; th.appendChild(im); }
+      var th = null;
+      if (a.image) { th = document.createElement('span'); th.className = 'pd-add-th'; var im = document.createElement('img'); im.src = a.image; im.alt = ''; th.appendChild(im); }
       var t = document.createElement('span'); t.className = 'pd-opt-t'; t.textContent = a.name;
       var pr = document.createElement('span'); pr.className = 'pd-opt-p'; pr.textContent = '+' + won(a.price);
       cb.addEventListener('change', function () { picked = addons.filter(function (x, i) { return box.querySelectorAll('input')[i].checked; }); render(); });
-      lab.appendChild(cb); lab.appendChild(th); lab.appendChild(t); lab.appendChild(pr); box.appendChild(lab);
+      lab.appendChild(cb); if (th) lab.appendChild(th); lab.appendChild(t); lab.appendChild(pr); box.appendChild(lab);
     });
   }
   function render() {
