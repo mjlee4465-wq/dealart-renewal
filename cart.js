@@ -21,13 +21,15 @@
 
   /* 브랜드별로 묶는다 (담은 순서 유지) */
   function groups() {
-    var order = [], map = {};
+    var order = [], map = {}, total = {}, seen = {};
     cart.forEach(function (it) {
-      var b = brandOf(it);
-      if (!map[b]) { map[b] = []; order.push(b); }
-      map[b].push(it);
+      var b = brandOf(it), k = b + '|' + (it.lot || '');
+      if (!map[k]) { map[k] = { brand: b, key: k, items: [] }; order.push(map[k]); }
+      map[k].items.push(it);
     });
-    return order.map(function (b) { return { brand: b, items: map[b] }; });
+    order.forEach(function (g) { total[g.brand] = (total[g.brand] || 0) + 1; });
+    order.forEach(function (g) { seen[g.brand] = (seen[g.brand] || 0) + 1; g.label = total[g.brand] > 1 ? g.brand + ' · 묶음 ' + seen[g.brand] : g.brand; });
+    return order;
   }
   function sub(items) { return items.reduce(function (s, it) { return isSel(it) ? s + it.price * it.qty : s; }, 0); }
 
@@ -78,26 +80,26 @@
     var empty = cart.length === 0, total = 0, n = 0, brands = [];
     groups().forEach(function (g) {
       var selN = g.items.filter(isSel).length, s = sub(g.items);
-      total += s; n += selN; if (selN) brands.push({ brand: g.brand, sum: s, n: selN });
+      total += s; n += selN; if (selN) brands.push({ brand: g.brand, label: g.label, sum: s, n: selN });
 
-      var sec = el('section', 'ct-group'); sec.setAttribute('aria-label', g.brand + ' 상품');
+      var sec = el('section', 'ct-group'); sec.setAttribute('aria-label', g.label + ' 상품');
       var head = el('div', 'ct-ghead');
       var lab = el('label', 'ct-check');
       var cb = el('input'); cb.type = 'checkbox'; cb.checked = selN === g.items.length; cb.indeterminate = selN > 0 && selN < g.items.length;
-      cb.setAttribute('aria-label', g.brand + ' 전체 선택');
+      cb.setAttribute('aria-label', g.label + ' 전체 선택');
       cb.addEventListener('change', function () { g.items.forEach(function (it) { it.sel = cb.checked; }); save(); render(); });
       lab.appendChild(cb); lab.appendChild(el('span', 'ct-box'));
       head.appendChild(lab);
-      var name = el('a', 'ct-gname', g.brand); name.href = BRAND_PAGE[g.brand] || 'brands.html';
+      var name = el('a', 'ct-gname', g.label); name.href = BRAND_PAGE[g.brand] || 'brands.html';
       head.appendChild(name);
       head.appendChild(el('span', 'ct-gcount', g.items.length + '개 상품'));
       sec.appendChild(head);
       var ul = el('ul', 'ct-list');
       g.items.forEach(function (it) { ul.appendChild(renderItem(it)); });
       sec.appendChild(ul);
-      if (selN) { var gs = el('div', 'ct-shipline ct-brandfee'); gs.appendChild(el('span', null, '배송비 예상 (브랜드당 1회)')); gs.appendChild(el('span', null, won(SHIP_FEE))); sec.appendChild(gs); }
+      if (selN) { var gs = el('div', 'ct-shipline ct-brandfee'); gs.appendChild(el('span', null, '배송비 예상 (묶음당 1회)')); gs.appendChild(el('span', null, won(SHIP_FEE))); sec.appendChild(gs); }
       var gf = el('div', 'ct-gfoot');
-      gf.appendChild(el('span', null, g.brand + ' 선택 상품 금액'));
+      gf.appendChild(el('span', null, g.label + ' 선택 상품 금액'));
       gf.appendChild(el('strong', null, won(s)));
       sec.appendChild(gf);
       box.appendChild(sec);
@@ -112,11 +114,12 @@
     var list = $('ctSumList'); list.textContent = '';
     if (!brands.length) { var none = el('li', 'ct-sum-row'); none.appendChild(el('span', null, '선택한 상품이 없어요')); list.appendChild(none); }
     brands.forEach(function (b) {
-      var li = el('li', 'ct-sum-row'); li.appendChild(el('span', null, b.brand + ' (' + b.n + '개)')); li.appendChild(el('strong', null, won(b.sum))); list.appendChild(li);
+      var li = el('li', 'ct-sum-row'); li.appendChild(el('span', null, b.label + ' (' + b.n + '개)')); li.appendChild(el('strong', null, won(b.sum))); list.appendChild(li);
     });
     if (n > 0) { var sf = el('li', 'ct-sum-row'); sf.appendChild(el('span', null, '배송비 예상 합계')); sf.appendChild(el('strong', null, won(brands.length * SHIP_FEE))); list.appendChild(sf); }
     $('ctSumTotal').textContent = won(total); $('ctTotal').textContent = won(total);
-    $('ctBrandN').textContent = '브랜드 ' + brands.length + '곳';
+    var bset = {}; brands.forEach(function (b) { bset[b.brand] = 1; });
+    $('ctBrandN').textContent = '브랜드 ' + Object.keys(bset).length + '곳';
     $('ctBuyT').textContent = '총 ' + n + '개 상품 주문하기';
     var buy = $('ctBuy'); buy.classList.toggle('is-off', n === 0); buy.setAttribute('aria-disabled', n === 0 ? 'true' : 'false');
     render.brands = brands; render.total = total;

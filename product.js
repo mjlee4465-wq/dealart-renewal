@@ -59,8 +59,9 @@
     try {
       var cart = JSON.parse(localStorage.getItem('dealart.cart') || '[]');
       if (!Array.isArray(cart)) cart = [];
-      var same = cart.filter(function (c) { return c.name === line.name && c.ship === line.ship && (c.opts || []).join() === line.opts.join(); })[0];
-      if (same) same.qty = Math.min(99, same.qty + line.qty); else cart.push(line);
+      // 같은 브랜드를 또 담아도 합치지 않는다: 담을 때마다 새 묶음(lot)으로 들어가고, 묶음마다 배송비·희망일이 따로 적용된다
+      line.lot = 'L' + Date.now().toString(36) + Math.floor(Math.random() * 1296).toString(36);
+      cart.push(line);
       localStorage.setItem('dealart.cart', JSON.stringify(cart));
       badge(); openModal();
     } catch (e) { say('장바구니에 담지 못했어요'); }

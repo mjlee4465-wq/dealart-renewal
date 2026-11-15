@@ -16,7 +16,7 @@ function dealartOrderBoot() {
   try {
     var raw = JSON.parse(localStorage.getItem(KEY) || '[]');
     items = (Array.isArray(raw) ? raw : []).filter(function (x) { return x && x.name && x.qty > 0 && x.price >= 0 && x.sel !== false; })
-      .map(function (x) { return { brand: x.brand || '스즈란테이', name: x.name, qty: Number(x.qty), price: Number(x.price), image: x.image, ship: METHODS.some(function (m) { return m.v === x.ship; }) ? x.ship : METHODS[0].v }; });
+      .map(function (x) { return { brand: x.brand || '스즈란테이', name: x.name, qty: Number(x.qty), price: Number(x.price), image: x.image, lot: x.lot || '', ship: METHODS.some(function (m) { return m.v === x.ship; }) ? x.ship : METHODS[0].v }; });
   } catch (e) { items = []; }
 
   var info = {}; // 브랜드별 주문자·받는 분
@@ -39,10 +39,17 @@ function dealartOrderBoot() {
   function pretty(s) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); if (!m) return ''; var d = new Date(+m[1], +m[2] - 1, +m[3]); return m[1] + '.' + m[2] + '.' + m[3] + '(' + DAYS[d.getDay()] + ')'; }
 
   /* ---------- 브랜드별 주문 영역 ---------- */
+  // 같은 브랜드라도 담을 때마다(lot) 따로 묶는다. 묶음마다 배송비 1회, 희망일도 따로 고른다.
   function groupsByBrand() {
-    var order = [], map = {};
-    items.forEach(function (it) { if (!map[it.brand]) { map[it.brand] = []; order.push(it.brand); } map[it.brand].push(it); });
-    return order.map(function (b) { return { brand: b, items: map[b] }; });
+    var order = [], map = {}, total = {}, seen = {};
+    items.forEach(function (it) {
+      var k = it.brand + '|' + (it.lot || '');
+      if (!map[k]) { map[k] = { brand: it.brand, key: k, items: [] }; order.push(map[k]); }
+      map[k].items.push(it);
+    });
+    order.forEach(function (g) { total[g.brand] = (total[g.brand] || 0) + 1; });
+    order.forEach(function (g) { seen[g.brand] = (seen[g.brand] || 0) + 1; g.n = seen[g.brand]; g.first = g.n === 1; g.label = total[g.brand] > 1 ? g.brand + ' · 묶음 ' + g.n : g.brand; });
+    return order;
   }
   var SHIP_FEE = 10000; // 예시: 브랜드당 1회 (같은 브랜드의 상품이 여러 개여도, 배송 방법이 달라도 한 번만. 장바구니와 동일)
   function shipGroups(list) {
@@ -54,20 +61,20 @@ function dealartOrderBoot() {
   function renderBrands() {
     var box = $('odBrands'); box.textContent = ''; sameLinks = []; pickers = [];
     groupsByBrand().forEach(function (g, bi) {
-      var card = el('section', 'od-card od-brand'); card.setAttribute('aria-label', g.brand + ' 주문');
+      var card = el('section', 'od-card od-brand'); card.setAttribute('aria-label', g.label + ' 주문');
       var head = el('div', 'od-bhead');
-      var nm = el('a', 'od-bname', g.brand); nm.href = BRAND_PAGE[g.brand] || 'brands.html'; head.appendChild(nm);
+      var nm = el('a', 'od-bname', g.label); nm.href = BRAND_PAGE[g.brand] || 'brands.html'; head.appendChild(nm);
       head.appendChild(el('strong', 'od-bsum', won(sub(g.items))));
       card.appendChild(head);
 
       shipGroups(g.items).forEach(function (sg, si) {
-        var key = gk(g.brand, sg.ship), id = 'b' + bi + 's' + si;
+        var key = gk(g.key, sg.ship), id = 'b' + bi + 's' + si;
         var blk = el('div', 'od-ship');
         // 배송 방법
         var fs = el('fieldset', 'od-methods'); var lg = el('legend', null, '배송 방법'); fs.appendChild(lg);
         METHODS.forEach(function (m) {
           var lab = el('label', 'od-chip'); var inp = el('input'); inp.type = 'radio'; inp.name = 'ship-' + id; inp.value = m.v; inp.checked = m.v === sg.ship;
-          inp.addEventListener('change', function () { moveShip(g.brand, sg, m.v, id); });
+          inp.addEventListener('change', function () { moveShip(g, sg, m.v, id); });
           lab.appendChild(inp); lab.appendChild(el('span', null, m.v)); fs.appendChild(lab);
         });
         blk.appendChild(fs);
@@ -82,15 +89,15 @@ function dealartOrderBoot() {
           ul.appendChild(li);
         });
         blk.appendChild(ul);
-        if (si === 0) { var fee = el('div', 'od-fee'); fee.appendChild(el('span', null, '배송비 (브랜드당 1회)')); fee.appendChild(el('strong', null, won(SHIP_FEE))); blk.appendChild(fee); }
+        if (si === 0) { var fee = el('div', 'od-fee'); fee.appendChild(el('span', null, '배송비 (묶음당 1회)')); fee.appendChild(el('strong', null, won(SHIP_FEE))); blk.appendChild(fee); }
         // 희망일 — 주문조회 페이지와 같은 년·월 목록 + 일 달력
         var meth = METHODS.filter(function (m) { return m.v === sg.ship; })[0];
         var host = el('div', 'od-date'); blk.appendChild(host);
-        var label = g.brand + ' ' + meth.date;
+        var label = g.label + ' ' + meth.date;
         // 처음 열면 가능한 가장 빠른 날짜가 선택돼 있다
         if (!validDate(dates[key], meth)) dates[key] = iso(firstAvail(meth));
         var pk = window.DealartDatePicker.mount(host, { id: id, legend: meth.date, label: meth.date, min: minFor(meth), max: maxD, off: offLabel, value: dates[key], onChange: function (v) { dates[key] = v; var pe = host.querySelector('.od-ferr'); if (pe) { pe.remove(); updateBanner(); } } });
-        pickers.push({ brand: g.brand, key: key, label: label, api: pk, host: host });
+        pickers.push({ brand: g.brand, gkey: g.key, key: key, label: label, api: pk, host: host });
         // 요청사항
         var f2 = el('div', 'od-f'); var l2 = el('label', null, '요청사항 (선택)'); l2.setAttribute('for', id + 'm');
         var m2 = el('input'); m2.id = id + 'm'; m2.type = 'text'; m2.maxLength = 100; m2.placeholder = '예: 도착 시간, 문 앞에 놓아 주세요'; m2.value = memos[key] || '';
@@ -98,21 +105,21 @@ function dealartOrderBoot() {
         f2.appendChild(l2); f2.appendChild(m2); blk.appendChild(f2);
         card.appendChild(blk);
       });
-      card.appendChild(contactBlock(g.brand, bi));
+      if (g.first) card.appendChild(contactBlock(g.brand, bi)); // 주문자·받는 분은 브랜드당 한 번만 입력
       box.appendChild(card);
     });
     renderSum();
   }
 
   // 같은 브랜드 안에서 일부 상품만 다른 배송 방법을 쓰는 경우도 있어, 묶음 단위로 배송 방법을 바꾼다
-  function moveShip(brand, sg, to, id) {
-    var fromKey = gk(brand, sg.ship), toKey = gk(brand, to);
+  function moveShip(g, sg, to, id) {
+    var fromKey = gk(g.key, sg.ship), toKey = gk(g.key, to);
     sg.items.forEach(function (it) { it.ship = to; });
     if (!dates[toKey] && dates[fromKey]) dates[toKey] = dates[fromKey];
     if (!memos[toKey] && memos[fromKey]) memos[toKey] = memos[fromKey];
     renderBrands();
-    // 방금 선택한 칩으로 포커스 복귀 (재렌더로 위치가 바뀔 수 있어 브랜드 안에서 찾는다)
-    var cands = document.querySelectorAll('.od-brand[aria-label="' + brand + ' 주문"] input[type=radio][value="' + to + '"]:checked');
+    // 방금 선택한 칩으로 포커스 복귀 (재렌더로 위치가 바뀔 수 있어 묶음 안에서 찾는다)
+    var cands = document.querySelectorAll('.od-brand[aria-label="' + g.label + ' 주문"] input[type=radio][value="' + to + '"]:checked');
     if (cands[0]) cands[0].focus();
   }
 
@@ -121,7 +128,7 @@ function dealartOrderBoot() {
     var gs = groupsByBrand(), total = 0, cnt = 0;
     gs.forEach(function (g) {
       var s = sub(g.items); total += s; cnt += g.items.length;
-      var li = el('li', 'ct-sum-row'); li.appendChild(el('span', null, g.brand + ' (' + g.items.length + '개 상품)')); li.appendChild(el('strong', null, won(s))); list.appendChild(li);
+      var li = el('li', 'ct-sum-row'); li.appendChild(el('span', null, g.label + ' (' + g.items.length + '개 상품)')); li.appendChild(el('strong', null, won(s))); list.appendChild(li);
     });
     var sf = el('li', 'ct-sum-row'); sf.appendChild(el('span', null, '배송비 합계')); sf.appendChild(el('strong', null, won(gs.length * SHIP_FEE))); list.appendChild(sf);
     $('odTotal').textContent = won(total); $('odFootTotal').textContent = won(total);
@@ -209,7 +216,7 @@ function dealartOrderBoot() {
     var bad = [], gs = groupsByBrand();
     function flag(input, key) { input.setAttribute('aria-invalid', 'true'); var f = input.closest('.od-f'); if (f) addErr(f, errMsgs[key]); bad.push(input); }
     gs.forEach(function (g, gi) {
-      var o = infoOf(g.brand), pre = 'c' + gi, own = gi === 0 || !o.likeFirst;
+      var o = infoOf(g.brand), pre = 'c' + gi, own = g.first && (gi === 0 || !o.likeFirst);
       if (own) {
         if (!o.oName.trim()) flag($(pre + 'on'), 'oName');
         if (!phoneOk(o.oPhone)) flag($(pre + 'op'), 'oPhone');
@@ -219,7 +226,7 @@ function dealartOrderBoot() {
         }
         if (!o.rAddr.trim()) flag($(pre + 'ra'), 'rAddr');
       }
-      pickers.filter(function (p) { return p.brand === g.brand; }).forEach(function (p) {
+      pickers.filter(function (p) { return p.gkey === g.key; }).forEach(function (p) {
         if (!p.api.getValue()) { p.api.setInvalid(true); addErr(p.host, errMsgs.date); bad.push(p.api.firstMissing()); }
       });
     });
@@ -264,7 +271,7 @@ function dealartOrderBoot() {
   var payTimer;
   function snapshot() {
     var gs = groupsByBrand(), total = 0, cnt = 0, firstDate = '', methods = {};
-    var rows = gs.map(function (g) { var sm = sub(g.items); total += sm; cnt += g.items.length; return { brand: g.brand, n: g.items.length, sum: sm }; });
+    var rows = gs.map(function (g) { var sm = sub(g.items); total += sm; cnt += g.items.length; return { brand: g.label, n: g.items.length, sum: sm }; });
     items.forEach(function (it) { methods[it.ship] = 1; });
     pickers.forEach(function (p) { var v = dates[p.key]; if (v && (!firstDate || v < firstDate)) firstDate = v; });
     return { rows: rows, total: total, ship: rows.length * SHIP_FEE, firstDate: firstDate, method: Object.keys(methods).join('·') };
