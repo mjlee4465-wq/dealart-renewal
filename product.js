@@ -2,7 +2,7 @@
   'use strict';
   var PRICE = 12900; // 예시 가격 (실제 가격은 주문 페이지 기준)
   var BRANDS = {
-    suzuran: { name: '스즈란테이', page: 'brand-suzuran.html', image: 'assets/imgImage6.png', items: ['치킨+안심까스'], descs: ['엄선된 육질과 일본 정토 조리법이 만난 최상의 밸런스'], images: ['assets/suzuran-chicken-hire.jpg'] },
+    suzuran: { name: '스즈란테이', page: 'brand-suzuran.html', image: 'assets/imgImage6.png', items: ['치킨+안심까스'], descs: ['엄선된 육질과 일본 정통 조리법이 만난 최상의 밸런스'], images: ['assets/suzuran-chicken-hire.jpg'] },
     obok: { name: '오복수산', page: 'brand-obok.html', image: 'assets/imgImage7.png', items: ['카이센동'] },
     anju: { name: '안주마을', page: 'brand-anju.html', image: 'assets/imgImage8.png', items: ['대표 안주'] }
   };
