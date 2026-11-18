@@ -834,3 +834,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 .pd-hero.pd-cut{background:var(--bg-muted)}
 .pd-hero.pd-cut img{object-fit:contain;padding:28px 0 8px}
+
+.slide-banner{background:#f9c4bd}
+.slide-blur{position:absolute;inset:-24px;width:calc(100% + 48px);height:calc(100% + 48px);object-fit:cover;filter:blur(22px) saturate(1.1)}
+.slide-banner-img{position:absolute;left:0;top:50%;width:100%;height:auto;transform:translateY(-50%)}
