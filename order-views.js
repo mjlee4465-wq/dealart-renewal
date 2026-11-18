@@ -137,7 +137,7 @@
         { date: '2026-11-15', number: 'DA-20261115-0042', status: 1, deliveryDate: '2026-11-17', method: '퀵배송', items: [{ brand: '스즈란테이', name: '치킨+안심까스', qty: 2, price: 19000, image: 'assets/suzuran-chicken-hire.jpg' }] },
         { date: '2026-11-15', number: 'DA-20261115-0043', status: 2, deliveryDate: '2026-11-17', method: '전국택배', items: [{ brand: '오복수산', name: '카이센동', qty: 1, price: 12900, image: 'assets/imgImage7.png' }] },
         { date: '2026-11-10', number: 'DA-20261110-0007', status: 3, deliveryDate: '2026-11-12', method: '퀵배송', items: [{ brand: '스즈란테이', name: '생선까스', qty: 1, price: 22000, image: 'assets/suzuran-fish-katsu.jpg' }] },
-        { date: '2026-11-05', number: 'DA-20261105-0003', status: 4, deliveryDate: '', method: '전국택배', items: [{ brand: '안주마을', name: '대표 안주', qty: 1, price: 12900, image: 'assets/imgImage8.png' }] }
+        { date: '2026-11-05', number: 'DA-20261105-0003', status: 4, deliveryDate: '', method: '전국택배', items: [{ brand: '안주마을', name: '대표 안주', qty: 1, price: 12900, image: 'assets/photo-anju.jpg' }] }
       ], { date: '2026-11-15', phone: '01012345678' }, true);
     } else { showEmpty(sample, true); }
     window.scrollTo(0, 0);

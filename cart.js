@@ -146,7 +146,7 @@
   var FAVS = [
     { key: 'dealart.fav.suzuran', name: '스즈란테이', kind: '일식·도시락 · 예약 주문', page: 'brand-suzuran.html', image: 'assets/imgImage6.png' },
     { key: 'dealart.fav.obok', name: '오복수산', kind: '일식·해산물 · 예약 주문', page: 'brand-obok.html', image: 'assets/imgImage7.png' },
-    { key: 'dealart.fav.anju', name: '안주마을', kind: '한식·안주 · 예약 주문', page: 'brand-anju.html', image: 'assets/imgImage8.png' }
+    { key: 'dealart.fav.anju', name: '안주마을', kind: '한식·안주 · 예약 주문', page: 'brand-anju.html', image: 'assets/photo-anju.jpg' }
   ];
   function liked() { return FAVS.filter(function (f) { try { return localStorage.getItem(f.key) === '1'; } catch (e) { return false; } }); }
   function renderFav() {
