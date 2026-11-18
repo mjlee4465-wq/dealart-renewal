@@ -838,3 +838,12 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .slide-banner{background:#f9c4bd}
 .slide-blur{position:absolute;inset:-24px;width:calc(100% + 48px);height:calc(100% + 48px);object-fit:cover;filter:blur(22px) saturate(1.1)}
 .slide-banner-img{position:absolute;left:0;top:50%;width:100%;height:auto;transform:translateY(-50%)}
+
+.f-biz{margin-top:18px}
+.f-biz summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-size:14px;line-height:22px;font-weight:500;color:var(--ink-72)}
+.f-biz summary::-webkit-details-marker{display:none}
+.f-biz summary::after{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-top:2px solid currentColor;transform:rotate(-45deg) translate(-1px,1px);transition:transform .2s}
+.f-biz:not([open]) summary::after{transform:rotate(135deg) translate(-1px,1px)}
+.f-biz{display:block}
+.f-biz summary{white-space:nowrap}
+.f-biz .f-bizinfo{display:block}
